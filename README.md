@@ -1,5 +1,34 @@
 # timeseries
 
+
+
+
+
+hypertable
+
+observationid  | ts                     | data | code                 | deviceid  | patientid  | unit
+------------------------------------------------------------------------------------------------------
+ekg            | 19/02/2015 9:30:35.000 | 2041 | MDC_ECG_ELEC_POTL_I  | 123       | 123        | mv
+ekg            | 19/02/2015 9:30:35.010 | 2043 | MDC_ECG_ELEC_POTL_I  | 123       | 123        | mv
+ekg            | 19/02/2015 9:30:35.020 | 2037 | MDC_ECG_ELEC_POTL_I  | 123       | 123        | mv
+ekg            | 19/02/2015 9:30:35.030 | 2047 | MDC_ECG_ELEC_POTL_I  | 123       | 123        | mv
+ekg            | 19/02/2015 9:30:35.040 | 2060 | MDC_ECG_ELEC_POTL_I  | 123       | 123        | mv
+ekg            | 19/02/2015 9:30:35.050 | 2062 | MDC_ECG_ELEC_POTL_I  | 123       | 123        | mv
+....																  | 123       | 123        | mv
+ekg            | 19/02/2015 9:30:35.000 | 2041 | MDC_ECG_ELEC_POTL_II | 123       | 123        | mv
+ekg            | 19/02/2015 9:30:35.010 | 2043 | MDC_ECG_ELEC_POTL_II | 123       | 123        | mv
+ekg            | 19/02/2015 9:30:35.020 | 2037 | MDC_ECG_ELEC_POTL_II | 123       | 123        | mv
+ekg            | 19/02/2015 9:30:35.030 | 2047 | MDC_ECG_ELEC_POTL_II | 123       | 123        | mv
+ekg            | 19/02/2015 9:30:35.040 | 2060 | MDC_ECG_ELEC_POTL_II | 123       | 123        | mv
+ekg            | 19/02/2015 9:30:35.050 | 2062 | MDC_ECG_ELEC_POTL_II | 123       | 123        | mv
+....
+
+
+
+
+
+
+
 FIXME: my new application.
 
 ## Installation
