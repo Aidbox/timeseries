@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  db:
+    image: aidboxdbts-pg12:latest
+    ports:
+      - 5444:5432
+    environment:
+      POSTGRES_PASSWORD: postgres
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000
