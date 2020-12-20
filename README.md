@@ -1,4 +1,4 @@
-# Aidbox with TimeScale DB
+# Aidbox with Timescale DB
 
 
 ## Install
