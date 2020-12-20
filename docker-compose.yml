@@ -2,13 +2,14 @@ version: "3.9"
 services:
   db:
     container_name: tsdb
-    image: aidboxdbts-pg12:latest
-    volumes:
-      - pgdata:/var/lib/postgresql/data
+    image: ${PG_IMAGE}
     ports:
-      - 5444:5432
+      - ${PG_PORT}:5432
     environment:
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+    volumes:
+      - "./pgdata:/var/lib/postgresql/data"
+
   grafana:
     container_name: grafana
     image: grafana/grafana

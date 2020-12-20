@@ -1,0 +1,13 @@
+.vs
+.cpcache
+**.bak
+.DS_Store
+.nrepl-port
+*.#*
+*#*#
+*.*~
+resources/fhir-*
+jars
+pgdata
+grafanadata
+pgdata*

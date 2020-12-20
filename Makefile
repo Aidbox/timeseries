@@ -1,10 +1,15 @@
-build-db:
-	docker build -t aidboxdbts-pg12 .
-build-wal-g:
-	docker build -t alpine-wal-g -f Dockerfile.wal-g .
-run-db:
-	docker run -p 5444:5432 --env POSTGRES_PASSWORD=postgres aidboxdbts-pg12
+PG_IMAGE    = aidbox/ts-pg12
+PG_PORT     = 5444
+PG_PASSWORD = postgres
+PG_USER     = postgres
+
+.EXPORT_ALL_VARIABLES:
+
 up:
-	docker-compose up -d
+	docker-compose -p aidbox-ts up -d
 down:
-	docker-compose down
+	docker-compose -p aidbox-ts down
+build-db:
+	docker build -t ${PG_IMAGE} .
+push-db:
+	docker push ${PG_IMAGE}
