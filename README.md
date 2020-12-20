@@ -1,4 +1,20 @@
-# timeseries
+# Aidbox with TimeScale DB
+
+
+## Install
+
+* Get DevBox license key
+* Copy `.license.tpl` to `.license`
+``` bash
+cp .license.tpl .license
+```
+* Edit `.license` file and enter your License ID and License Key
+* Run docker compose
+``` bash
+make up
+```
+
+
 
 
 

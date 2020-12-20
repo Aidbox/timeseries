@@ -1,12 +1,21 @@
 version: "3.9"
 services:
-  db:
-    container_name: tsdb
-    image: ${PG_IMAGE}
+  devbox:
+    container_name: devbox
+    image: "${AIDBOX_IMAGE}"
+    depends_on:
+      - "db"
     ports:
-      - ${PG_PORT}:5432
+      - "${AIDBOX_PORT}:${AIDBOX_PORT}"
+    env_file:
+      - .license
+      - .env
+
+  db:
+    container_name: timescaledb
+    image: aidbox/ts-pg12
     environment:
-      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_PASSWORD: postgres
     volumes:
       - "./pgdata:/var/lib/postgresql/data"
 

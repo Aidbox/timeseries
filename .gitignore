@@ -11,3 +11,4 @@ jars
 pgdata
 grafanadata
 pgdata*
+.license

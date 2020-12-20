@@ -1,9 +1,6 @@
-PG_IMAGE    = aidbox/ts-pg12
-PG_PORT     = 5444
-PG_PASSWORD = postgres
-PG_USER     = postgres
-
 .EXPORT_ALL_VARIABLES:
+
+include .env
 
 up:
 	docker-compose -p aidbox-ts up -d
