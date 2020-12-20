@@ -3,12 +3,16 @@
 
 ## Install
 
-* Get DevBox license key
+* Get DevBox license key https://license-ui.aidbox.app
 * Copy `.license.tpl` to `.license`
 ``` bash
 cp .license.tpl .license
 ```
-* Edit `.license` file and enter your License ID and License Key
+* Edit `.license` file and enter your `License ID` and `License Key`
+``` bash
+AIDBOX_LICENSE_ID=<your-license-id-here>
+AIDBOX_LICENSE_KEY=<your-license-key-here>
+```
 * Run docker compose
 ``` bash
 make up
