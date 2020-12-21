@@ -13,6 +13,9 @@ services:
   grafana:
     container_name: grafana
     image: grafana/grafana
+    environment:
+      GF_SECURITY_ALLOW_EMBEDDING: ${GF_EMBEDDING}
+      GF_AUTH_ANONYMOUS_ENABLED: ${GF_ANONYMOUS}
     volumes:
       - "./grafanadata:/var/lib/grafana"
     ports:
