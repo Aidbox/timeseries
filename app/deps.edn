@@ -43,12 +43,12 @@
    :main-opts  ["-m" "cambada.uberjar"
                 "-p" "resources"
                 "-a" "all"
-                "--app-group-id" "alkona"
+                "--app-group-id" "aidbox-ts"
                 "--app-artifact-id" "app"
                 "--no-copy-source"]
    :jvm-opts   ^:replace ["-XX:-OmitStackTraceInFastThrow"]}
 
   :uberjar
   {:extra-deps {seancorfield/depstar {:mvn/version "1.1.128"}}
-   :main-opts ["-m" "hf.depstar.uberjar" "timeseries.jar"
+   :main-opts ["-m" "hf.depstar.uberjar" "app.jar"
                "-C" "-m" "aidbox.timeseries"]}}}

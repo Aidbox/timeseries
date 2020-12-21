@@ -12,3 +12,6 @@ pgdata
 grafanadata
 pgdata*
 .license
+app/app.jar
+app/pom.xml
+app/target

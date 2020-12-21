@@ -1,5 +1,6 @@
 (ns aidbox.timeseries
-  (:require [aidbox.sdk.core :as sdk]))
+  (:require [aidbox.sdk.core :as sdk])
+  (:gen-class))
 
 (def env
   {:init-url           (or (System/getenv "APP_INIT_URL")           "http://localhost:8888")
