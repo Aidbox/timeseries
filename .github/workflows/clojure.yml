@@ -28,6 +28,6 @@ jobs:
         uses: aevea/action-kaniko@master
         with:
           image: aidbox/aidbox-ts-app
-          build_file: app/Dockerfile
+          build_file: Dockerfile.app
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}

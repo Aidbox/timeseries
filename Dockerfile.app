@@ -1,3 +1,3 @@
 FROM clojure:latest
-COPY app.jar /app.jar
+COPY app/app.jar /app.jar
 CMD  java -jar /app.jar
