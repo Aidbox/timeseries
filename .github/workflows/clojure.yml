@@ -26,10 +26,18 @@ jobs:
       - name: Build ui
         run: cd ui && clojure -A:shadow release app
 
-      - name: Kaniko build
+      - name: Kaniko build App
         uses: aevea/action-kaniko@master
         with:
           image: aidbox/aidbox-ts-app
           build_file: Dockerfile.app
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Kaniko build UI
+        uses: aevea/action-kaniko@master
+        with:
+          image: aidbox/aidbox-ts-ui
+          build_file: Dockerfile.ui
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
