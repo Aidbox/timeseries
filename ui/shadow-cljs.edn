@@ -1,0 +1,7 @@
+{:dev-http {3434 "public"}
+ :builds
+ {:app
+  {:target           :browser
+   :modules          {:main {:init-fn app.core/init}}
+   :devtools         {:preloads [#_re-frisk.preload]}
+   :release          {:compiler-options {:optimizations :advanced}}}}}
