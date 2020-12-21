@@ -23,6 +23,8 @@ jobs:
 
       - name: Build app
         run: cd app && clojure -A:uberjar
+      - name: Build ui
+        run: cd ui && clojure -A:shadow release app
 
       - name: Kaniko build
         uses: aevea/action-kaniko@master

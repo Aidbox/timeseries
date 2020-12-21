@@ -24,3 +24,5 @@ app-run:
 
 ui-repl:
 	cd ui && clj -A:shadow:dev:test watch app
+ui-build:
+	cd ui && clj -A:shadow release app
