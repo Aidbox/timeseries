@@ -24,7 +24,7 @@ app-repl:
 
 app-build:
 	#cd app && clojure -A:uberjar
-	cd app && clojure -M:build
+	cd app && clojure -A:build
 app-run:
 	java -jar app/app.jar
 app-run-container:
