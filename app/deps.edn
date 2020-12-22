@@ -42,7 +42,6 @@
                                  :sha     "e44a0bebd039285f3e10f15f5703d6eaf92672c7"}}
    :main-opts  ["-m" "cambada.uberjar"
                 "-m" "app.core"
-                "-n" "app.core"
                 "--app-group-id" "aidbox-ts"
                 "--app-artifact-id" "aidbox-ts"]
    :jvm-opts   ^:replace ["-XX:-OmitStackTraceInFastThrow"]}
