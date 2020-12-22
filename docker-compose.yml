@@ -2,14 +2,28 @@ version: "3.9"
 services:
   devbox:
     container_name: devbox
-    image: "${AIDBOX_IMAGE}"
+    image: healthsamurai/devbox:edge
     depends_on:
       - "db"
     ports:
-      - "${AIDBOX_PORT}:${AIDBOX_PORT}"
+      - 8888:8888
     env_file:
+      # Enter you license data
       - .license
-      - .env
+    environment:
+      # Aidbox settings
+      AIDBOX_PORT           : 8888
+      AIDBOX_FHIR_VERSION   : 4.0.0
+      AIDBOX_CLIENT_ID      : root
+      AIDBOX_CLIENT_SECRET  : secret
+      AIDBOX_ADMIN_ID       : admin
+      AIDBOX_ADMIN_PASSWORD : secret
+      # Aidbox database connection settings
+      PGHOST     : db
+      PGPORT     : 5432
+      PGUSER     : postgres
+      PGPASSWORD : postgres
+      PGDATABASE : devbox
 
   db:
     container_name: timescaledb
@@ -19,12 +33,28 @@ services:
     volumes:
       - "./pgdata:/var/lib/postgresql/data"
 
+  app:
+    container_name: app
+    image: aidbox/aidbox-ts-app:main
+    depends_on:
+      - "devbox"
+    environment:
+      APP_INIT_URL  : http://devbox:8888
+      APP_URL       : http://app:8989
+      APP_PORT      : 8989
+
+  ui:
+    container_name: ui
+    image: aidbox/aidbox-ts-ui:main
+    ports:
+      - "8585:80"
+
   grafana:
     container_name: grafana
     image: grafana/grafana
     environment:
-      GF_SECURITY_ALLOW_EMBEDDING: ${GF_EMBEDDING}
-      GF_AUTH_ANONYMOUS_ENABLED: ${GF_ANONYMOUS}
+      GF_SECURITY_ALLOW_EMBEDDING: "true"
+      GF_AUTH_ANONYMOUS_ENABLED:   "true"
     volumes:
       - "./grafanadata:/var/lib/grafana"
     ports:

@@ -1,4 +1,4 @@
-(ns aidbox.timeseries
+(ns app.core
   (:require [aidbox.sdk.core :as sdk])
   (:gen-class))
 

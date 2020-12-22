@@ -1,5 +1,5 @@
 {:paths ["src" "resources"]
- :deps {org.clojure/clojure         {:mvn/version "1.10.1"}
+ :deps {org.clojure/clojure         {:mvn/version "1.10.0"}
         org.clojure/java.jdbc       {:mvn/version "0.7.11"}
         org.postgresql/postgresql   {:mvn/version "42.2.9.jre7"}
         clj-yaml/clj-yaml           {:mvn/version "0.4.0"}
@@ -41,11 +41,10 @@
   {:extra-deps {cambada/cambada {:git/url "https://github.com/HealthSamurai/cambada"
                                  :sha     "e44a0bebd039285f3e10f15f5703d6eaf92672c7"}}
    :main-opts  ["-m" "cambada.uberjar"
-                "-p" "resources"
-                "-a" "all"
+                "-m" "app.core"
+                "-n" "app.core"
                 "--app-group-id" "aidbox-ts"
-                "--app-artifact-id" "app"
-                "--no-copy-source"]
+                "--app-artifact-id" "aidbox-ts"]
    :jvm-opts   ^:replace ["-XX:-OmitStackTraceInFastThrow"]}
 
   :uberjar

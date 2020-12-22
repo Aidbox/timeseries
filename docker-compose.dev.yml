@@ -1,0 +1,45 @@
+version: "3.9"
+services:
+  devbox:
+    container_name: devbox
+    image: "${AIDBOX_IMAGE}"
+    depends_on:
+      - "db"
+    ports:
+      - "${AIDBOX_PORT}:${AIDBOX_PORT}"
+    env_file:
+      - .license
+      - .env
+
+  db:
+    container_name: timescaledb
+    image: aidbox/ts-pg12
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - "./pgdata:/var/lib/postgresql/data"
+
+  app:
+    container_name: app
+    image: aidbox/aidbox-ts-app:main
+    environment:
+      APP_INIT_URL: http://devbox:${AIDBOX_PORT}
+      APP_URL: http://app:8989
+      APP_PORT: 8989
+
+  ui:
+    container_name: ui
+    image: aidbox/aidbox-ts-ui:main
+    ports:
+      - "8585:80"
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    environment:
+      GF_SECURITY_ALLOW_EMBEDDING: ${GF_EMBEDDING}
+      GF_AUTH_ANONYMOUS_ENABLED: ${GF_ANONYMOUS}
+    volumes:
+      - "./grafanadata:/var/lib/grafana"
+    ports:
+      - 3000:3000
