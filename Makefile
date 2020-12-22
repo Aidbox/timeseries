@@ -23,8 +23,8 @@ app-repl:
 	cd app && clj  -M:test:nrepl
 
 app-build:
-	#cd app && clojure -A:uberjar
-	cd app && clojure -A:build
+	cd app && clojure -A:uberjar
+	#cd app && clojure -A:build
 app-run:
 	java -jar app/app.jar
 app-run-container:
