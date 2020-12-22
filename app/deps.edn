@@ -38,8 +38,7 @@
                "-d" "test"]}
 
   :build
-  {:extra-deps {cambada/cambada {:git/url "https://github.com/HealthSamurai/cambada"
-                                 :sha     "e44a0bebd039285f3e10f15f5703d6eaf92672c7"}}
+  {:extra-deps {luchiniatwork/cambada {:mvn/version "1.0.0"}}
    :main-opts  ["-m" "cambada.uberjar"
                 "-m" "app.core"
                 "--app-group-id" "aidbox-ts"
