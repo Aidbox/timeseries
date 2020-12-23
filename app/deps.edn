@@ -6,9 +6,11 @@
         org.postgresql/postgresql   {:mvn/version "42.2.9.jre7"}
         clj-yaml/clj-yaml           {:mvn/version "0.4.0"}
         org.clojure/data.csv        {:mvn/version "0.1.4"}
+        http-kit/http-kit           {:mvn/version "2.3.0"}
         net.mikera/core.matrix      {:mvn/version "0.62.0"}
         honeysql/honeysql           {:mvn/version "0.9.8"}
         cheshire/cheshire           {:mvn/version "5.9.0"}
+        org.clojure/tools.logging   {:mvn/version "1.1.0"}
         aidbox/aidbox-clojure-sdk   {:git/url "https://github.com/Aidbox/aidbox-clojure-sdk"
                                      :sha     "3d63babe800b02420f78d06d753438a2b78f9770"}}
  :aliases
