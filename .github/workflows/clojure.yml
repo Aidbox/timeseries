@@ -8,13 +8,21 @@ on:
 
 jobs:
   build:
-    runs-on: clojure-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Prepare java
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
+
+      - name: Prepare java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - uses: DeLaGuardo/setup-graalvm@2.0
+        with:
+          graalvm-version: '19.3.1.java11'
 
       - name: Install clojure tools-deps
         uses: DeLaGuardo/setup-clojure@master
@@ -24,7 +32,7 @@ jobs:
       - name: Build app
         run: cd app && clojure -A:build
       - name: Build ui
-        run: cd ui && clojure -A:shadow release app
+        run: cd ui  && clojure -A:shadow release app
 
       - name: Kaniko build App
         uses: aevea/action-kaniko@master
