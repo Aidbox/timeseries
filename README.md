@@ -1,4 +1,4 @@
-# Aidbox with Timescale DB
+# Aidbox with Timescale DB ![Clojure CI](https://github.com/Aidbox/timeseries/workflows/Clojure%20CI/badge.svg)
 
 
 ## Install
