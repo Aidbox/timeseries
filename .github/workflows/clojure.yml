@@ -17,7 +17,9 @@ jobs:
           java-version: 1.8
 
       - name: Install clojure tools-deps
-        uses: clojure:latest
+        uses: DeLaGuardo/setup-clojure@master
+        with:
+          tools-deps: 1.10.1.469
 
       - name: Build app
         run: cd app && clojure -A:uberjar
