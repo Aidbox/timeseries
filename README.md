@@ -1,21 +1,61 @@
 # Aidbox with Timescale DB ![Clojure CI](https://github.com/Aidbox/timeseries/workflows/Clojure%20CI/badge.svg)
 
 
-## Install
+## Quik Installation
 
 * Get DevBox license key https://license-ui.aidbox.app
+
 * Copy `.license.tpl` to `.license`
 ``` bash
 cp .license.tpl .license
 ```
+
 * Edit `.license` file and enter your `License ID` and `License Key`
 ``` bash
 AIDBOX_LICENSE_ID=<your-license-id-here>
 AIDBOX_LICENSE_KEY=<your-license-key-here>
 ```
-* Run docker compose
+
+* Run `docker-compose.yml`
 ``` bash
 make up
+```
+
+* Open in browser http://localhost:8585
+
+## What inside WIP
+
+* Aidbox/devbox ....
+* Timescale db adopted for Aidbox .....
+* Aidbox app for
+  * converting Observation in to TS hypertabe
+  * reading TS hypertabe
+* Large dataset for demonstrating performance
+  * ECG dataset is a large dataset of 21837 clinical 12-lead ECGs from 18885 patients of 10 second length from https://physionet.org/content/ptb-xl/1.0.1/
+  * Heart Rate
+* Simple UI for demonstrating ECG results ...
+* Grafana for mode options ....
+
+## Performance compe
+
+- compare default aidbox structure and TS hypertable
+...
+
+
+
+## Development
+
+* Run `docker-compose.dev.yml` env
+``` bash
+make up-dev
+```
+* Run aidbox app
+``` bash
+make app-repl
+```
+* Run ui
+``` bash
+make ui-repl
 ```
 
 
@@ -24,72 +64,7 @@ make up
 
 
 
-hypertable
 
-observationid  | ts                     | data | code                 | deviceid  | patientid  | unit
-------------------------------------------------------------------------------------------------------
-ekg            | 19/02/2015 9:30:35.000 | 2041 | MDC_ECG_ELEC_POTL_I  | 123       | 123        | mv
-ekg            | 19/02/2015 9:30:35.010 | 2043 | MDC_ECG_ELEC_POTL_I  | 123       | 123        | mv
-ekg            | 19/02/2015 9:30:35.020 | 2037 | MDC_ECG_ELEC_POTL_I  | 123       | 123        | mv
-ekg            | 19/02/2015 9:30:35.030 | 2047 | MDC_ECG_ELEC_POTL_I  | 123       | 123        | mv
-ekg            | 19/02/2015 9:30:35.040 | 2060 | MDC_ECG_ELEC_POTL_I  | 123       | 123        | mv
-ekg            | 19/02/2015 9:30:35.050 | 2062 | MDC_ECG_ELEC_POTL_I  | 123       | 123        | mv
-....																  | 123       | 123        | mv
-ekg            | 19/02/2015 9:30:35.000 | 2041 | MDC_ECG_ELEC_POTL_II | 123       | 123        | mv
-ekg            | 19/02/2015 9:30:35.010 | 2043 | MDC_ECG_ELEC_POTL_II | 123       | 123        | mv
-ekg            | 19/02/2015 9:30:35.020 | 2037 | MDC_ECG_ELEC_POTL_II | 123       | 123        | mv
-ekg            | 19/02/2015 9:30:35.030 | 2047 | MDC_ECG_ELEC_POTL_II | 123       | 123        | mv
-ekg            | 19/02/2015 9:30:35.040 | 2060 | MDC_ECG_ELEC_POTL_II | 123       | 123        | mv
-ekg            | 19/02/2015 9:30:35.050 | 2062 | MDC_ECG_ELEC_POTL_II | 123       | 123        | mv
-....
-
-
-
-
-
-
-
-FIXME: my new application.
-
-## Installation
-
-Download from https://github.com/aidbox/timeseries
-
-## Usage
-
-FIXME: explanation
-
-Run the project directly:
-
-    $ clojure -M -m aidbox.timeseries
-
-Run the project's tests (they'll fail until you edit them):
-
-    $ clojure -M:test:runner
-
-Build an uberjar:
-
-    $ clojure -M:uberjar
-
-Run that uberjar:
-
-    $ java -jar timeseries.jar
-
-## Options
-
-FIXME: listing of options this app accepts.
-
-## Examples
-
-...
-
-### Bugs
-
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
 
 ## License
 

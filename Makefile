@@ -9,9 +9,9 @@ down:
 
 # Run dev env
 up-dev:
-	docker-compose -f docker-compose.dev.yaml -p aidbox-ts-dev up -d
+	docker-compose -f docker-compose.dev.yml -p aidbox-ts-dev up -d
 down-dev:
-	docker-compose -f docker-compose.dev.yaml -p aidbox-ts-dev down
+	docker-compose -f docker-compose.dev.yml -p aidbox-ts-dev down
 #------------------
 
 build-db:
