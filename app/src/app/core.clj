@@ -5,6 +5,7 @@
             [clojure.java.jdbc :as jdbc])
   (:gen-class))
 
+(defonce conn (atom nil))
 (def env
   {:init-url           (or (System/getenv "APP_INIT_URL")           "http://localhost:8888")
    :init-client-id     (or (System/getenv "APP_INIT_CLIENT_ID")     "root")
@@ -108,7 +109,6 @@
 
 
 (defonce app-state (atom {}))
-(defonce conn (atom nil))
 
 (defn mk-connection [state]
   (when @state (reset! state nil))
