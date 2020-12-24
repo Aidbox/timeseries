@@ -1,4 +1,5 @@
 ---- db: -h localhost -p 5488 -U postgres devbox
+\d+ patient
 ----
 \c devbox
 CREATE EXTENSION IF NOT EXISTS timescaledb;
@@ -9,6 +10,8 @@ CREATE TABLE observation_data (
  -- Time fields
  -- -- ts - primary time column, fill from  Observation.effective
  ts                        TIMESTAMPTZ NOT NULL,
+ Observation_id            TEXT,
+ Patient_id                TEXT,
 
  -- codings
  -- -- code
@@ -57,5 +60,8 @@ CREATE TABLE observation_data (
 
 SELECT create_hypertable('observation_data', 'ts');
 ----
+select *
+from observation_data;
 ----
+truncate observation_data;
 ----
