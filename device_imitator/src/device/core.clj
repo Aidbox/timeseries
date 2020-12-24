@@ -92,7 +92,7 @@
                     options)))
 
 (defn req-put [{:keys [uri options]}]
-  @(http/put (str (:box-url config) uri)
+  @(http/post (str (:box-url config) uri)
              (merge {:basic-auth ["root" "secret"]
                      :headers    {"content-type" "application/json"}}
                     (update options :body json/generate-string))))
@@ -120,7 +120,6 @@
                                      :initial-time initial-time})]
     (send-observation resource)
     (swap! schedule update patient-id rest)))
-
 (defn run-job [{:keys [patient-id dataset-path] :as opts}]
   (let [dataset      (parse-csv dataset-path)
         initial-time (now)
