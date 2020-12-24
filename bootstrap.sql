@@ -2,7 +2,7 @@
 \d+ patient
 ----
 \c devbox
-CREATE EXTENSION IF NOT EXISTS timescaledb;
+CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;
 ----
 DROP table if exists observation_data;
 
@@ -91,6 +91,18 @@ ORDER BY ts DESC
 ) as avgg
 where avgg.smooth_bpm > 100;
 ----
+SELECT
+  time_bucket('10s', ts) as bucket,
+  Patient_id,
+  AVG(valueQuantity_value) as avg_bpm,
+  array_agg(valueQuantity_value)
+FROM observation_data
+WHERE code = '8867-4' -- heart rate
+group by patient_id, time_bucket('10s', ts)
+HAVING AVG(valueQuantity_value) > 100
+ORDER BY bucket
+
+----
 
 1 avg(1 2 3)
 2 avg(2 3 4)
@@ -104,3 +116,26 @@ SELECT
   valueQuantity_value
 FROM
   observation_data
+
+----
+DROP VIEW if exists bpm_view CASCADE;
+
+CREATE VIEW bpm_view WITH
+(timescaledb.continuous, timescaledb.refresh_interval = '30s')
+AS
+SELECT
+  time_bucket('10s', ts) as time,
+  Patient_id,
+  AVG(valueQuantity_value) as avg_bpm
+FROM observation_data
+WHERE code = '8867-4' -- heart rate
+group by patient_id, time_bucket('10s', ts)
+HAVING AVG(valueQuantity_value) > 100
+--ORDER BY time
+----
+select * from bpm_view
+where patient_id = 'bd267d2a-ef47-4df6-9ea0-b221bd4bef21';
+----
+\x
+SELECT * FROM timescaledb_information.continuous_aggregate_stats;
+----
