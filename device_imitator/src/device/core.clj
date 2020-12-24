@@ -5,12 +5,27 @@
             [cheshire.core :as json]
             [overtone.at-at :as jobs]))
 
+(defn gen-guid []
+  (str (java.util.UUID/randomUUID)))
+
 (def config
   {:box-url "http://localhost:8888"
    :jobs {:j1 {:patient-id "333"
                :dataset-path  "resources/csv/bidmc_01_Numerics.csv"}
           :j2 {:patient-id "123"
                :dataset-path  "resources/csv/bidmc_02_Numerics.csv"}}})
+
+
+
+(defn configure [n]
+  {:box-url "http://localhost:8888"
+   :jobs (reduce
+          (fn [acc v]
+            (assoc acc v
+                   {:patient-id (gen-guid)
+                    :dataset-path (str "resources/csv/bidmc_"  (format "%02d" v) "_Numerics.csv")}))
+          {}
+          (range 1 (inc n)))})
 
 (defn now []
   (new java.util.Date))
@@ -137,7 +152,7 @@
 
   (parse-csv  "resources/csv/bidmc_01_Numerics.csv")
 
-  (run-jobs config)
+  (run-jobs (configure 50))
 
   (prn 1)
 

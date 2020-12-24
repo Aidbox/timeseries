@@ -60,8 +60,47 @@ CREATE TABLE observation_data (
 
 SELECT create_hypertable('observation_data', 'ts');
 ----
-select *
+\x
+select count(*)
 from observation_data;
+----
+select distinct(patient_id)
+from observation_data;;
+----
+\x
+select * from  observation_data limit 1;
 ----
 truncate observation_data;
 ----
+select *
+from (
+SELECT
+  ts,
+  Patient_id,
+  AVG(valueQuantity_value) OVER(
+    PARTITION BY Patient_id
+    ORDER BY ts
+    ROWS BETWEEN 60 PRECEDING AND CURRENT ROW
+  )
+  AS smooth_bpm
+FROM observation_data
+WHERE code = '8867-4' -- heart rate
+  and ts > NOW() - INTERVAL '1 minute'
+  --and smooth_bpm > 90
+ORDER BY ts DESC
+) as avgg
+where avgg.smooth_bpm > 100;
+----
+
+1 avg(1 2 3)
+2 avg(2 3 4)
+3 avg(3 4 5)
+4
+5
+
+
+SELECT
+  $__time(ts),
+  valueQuantity_value
+FROM
+  observation_data
