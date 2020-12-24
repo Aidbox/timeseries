@@ -72,7 +72,7 @@ select * from  observation_data limit 1;
 ----
 truncate observation_data;
 ----
-select *
+select patient_id, (array_agg(smooth_bpm))[1]
 from (
 SELECT
   ts,
@@ -89,18 +89,6 @@ WHERE code = '8867-4' -- heart rate
   --and smooth_bpm > 90
 ORDER BY ts DESC
 ) as avgg
-where avgg.smooth_bpm > 100;
+where avgg.smooth_bpm > 100
+group by patient_id;
 ----
-
-1 avg(1 2 3)
-2 avg(2 3 4)
-3 avg(3 4 5)
-4
-5
-
-
-SELECT
-  $__time(ts),
-  valueQuantity_value
-FROM
-  observation_data
