@@ -1,0 +1,2 @@
+repl:
+	clj -A:nrepl

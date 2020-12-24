@@ -1,0 +1,28 @@
+{:paths ["src" "resources"]
+ :deps  {org.clojure/clojure  {:mvn/version "1.10.1"}
+         clj-yaml/clj-yaml    {:mvn/version "0.4.0"}
+         http-kit/http-kit    {:mvn/version "2.5.0"}
+         overtone/at-at       {:mvn/version "1.2.0"}
+         org.clojure/data.csv {:mvn/version "0.1.4"}
+         cheshire/cheshire    {:mvn/version "5.9.0"}}
+ :aliases
+ {:nrepl
+  {:extra-deps {cider/cider-nrepl             {:mvn/version "0.25.0-SNAPSHOT"}
+                refactor-nrepl/refactor-nrepl {:mvn/version "2.5.0"}}
+   :main-opts  ["-m"           "nrepl.cmdline"
+                "--middleware" "[cider.nrepl/cider-middleware]"]
+   :jvm-opts   ["-Xmx512M" "-XX:-OmitStackTraceInFastThrow"]}
+
+  :build
+  {:extra-deps {cambada/cambada {:git/url "https://github.com/HealthSamurai/cambada"
+                                 :sha     "e44a0bebd039285f3e10f15f5703d6eaf92672c7"}}
+   :main-opts  ["-m" "cambada.uberjar"
+                "-m" "app.core"
+                "--app-group-id" "aidbox-ts"
+                "--app-artifact-id" "aidbox-ts"]
+   :jvm-opts   ^:replace ["-XX:-OmitStackTraceInFastThrow"]}
+
+  :uberjar
+  {:extra-deps {seancorfield/depstar {:mvn/version "1.1.128"}}
+   :main-opts  ["-m" "hf.depstar.uberjar" "app.jar"
+                "-C" "-m" "app.core"]}}}
