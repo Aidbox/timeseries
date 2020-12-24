@@ -1,6 +1,7 @@
 (ns app.core
   (:require [aidbox.sdk.core :as sdk]
             [app.db :as db]
+            [honeysql.format :as hsformat]
             [clojure.java.jdbc :as jdbc])
   (:gen-class))
 
@@ -24,6 +25,14 @@
     {:create-ts-observation
      {:method "POST" :path ["Observation"]}}}})
 
+(defn to-date [s]
+  (-> s
+      java.time.Instant/parse
+      java.util.Date/from))
+
+
+(defn to-ts [s]
+  (.getTime ( to-date s)))
 
 (defn gen-guid []
   (str (java.util.UUID/randomUUID)))
@@ -82,26 +91,52 @@
                  dates
                  (parse-value (:value c))))))))
 
+(defn insert-ts-obs [obs]
+  (jdbc/query
+   @conn
+   (hsformat/format
+    {:insert-into :observation_data
+     :values obs
+     :returning [:*]})))
 
 (defmethod sdk/endpoint
   :create-ts-observation
   [ctx {res :resource :as request}]
+
   {:status 200
-   :body res})
+   :body (-> res observation-2-ts insert-ts-obs)})
 
 
 (defonce app-state (atom {}))
-
-(defn -main []
-  (sdk/start* app-state ctx))
-
 (defonce conn (atom nil))
-(comment
-  (reset! conn
+
+(defn mk-connection [state]
+  (when @state (reset! state nil))
+  (reset! state
           (db/datasource {:host (or (System/getenv "PGHOST") "localhost")
                           :port (or (System/getenv "PGPORT") "5488")
                           :user (or (System/getenv "PGUSER") "postgres")
                           :password (or (System/getenv "PGPASSWORD") "postgres")
-                          :database (or (System/getenv "PGDATABASE") "devbox")}))
+                          :database (or (System/getenv "PGDATABASE") "devbox")})))
+
+(defn -main []
+  (mk-connection conn)
+  (sdk/start* app-state ctx))
+
+(comment
+  (mk-connection conn)
+
   (jdbc/query @conn ["select count(*) from attribute"])
+
+
+  (jdbc/query
+   @conn
+   (hsformat/format
+    {:insert-into :observation_data
+     :values [{:ts "2016-06-06T01:39:47.000Z"}]
+     :returning [:*]}))
   )
+
+
+(comment
+  (str (java.sql.Timestamp. (.getTime ( to-date "2016-06-06T01:39:47.01230Z")))))
