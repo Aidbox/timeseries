@@ -134,7 +134,13 @@
                                      :dataset      data
                                      :initial-time initial-time})]
     (send-observation resource)
-    (swap! schedule update patient-id rest)))
+    (swap! schedule update patient-id (fn [items]
+                                        (let [{:keys [rel-time]} (last items)
+                                              rel-time* (str (inc (Integer/parseInt rel-time)))
+                                              new-item (assoc data :rel-time rel-time*)]
+                                          (concat (rest items) (list new-item)))))))
+
+
 (defn run-job [{:keys [patient-id dataset-path] :as opts}]
   (let [dataset      (parse-csv dataset-path)
         initial-time (now)
@@ -143,6 +149,7 @@
                                 :initial-time initial-time}) my-pool)))
 
 (defn run-jobs [{:keys [jobs]}]
+  (reset! schedule {})
   (doall
    (for [params (vals jobs)]
      (run-job params))))
