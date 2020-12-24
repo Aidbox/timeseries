@@ -92,6 +92,38 @@
                  dates
                  (parse-value (:value c))))))))
 
+(defn ts->component [ts-record]
+  (let [{:keys [display system code valuequantity_unit valuequantity_value]} ts-record]
+    {:code
+     {:text display
+      :coding
+      [{:code    code
+        :system  system
+        :display display}]}
+     :value {:Quantity {:unit valuequantity_unit :value valuequantity_value}}}))
+
+(defn ts-2-observation [observation-id]
+  (let [fhir-obs (jdbc/query @conn (hsformat/format
+                                    {:select [:*]
+                                     :from   [:observation]
+                                     :where  [:= :id observation-id]}))
+        {:keys [id resource resource_type]} fhir-obs
+        ts-obs (jdbc/query @conn (hsformat/format
+                                  {:select [:*]
+                                   :from [:observation_data]
+                                   :where [:= :Observation_id observation-id]}))
+        resource* (assoc resource :resourceType resource_type :id id)]
+    (assoc resource* :component (mapv ts->component ts-obs))))
+
+;; (jdbc/query
+;;    @conn
+;;    (hsformat/format
+;;     {:select [:*]
+;;      :from [:observation_data]
+;;      ;; :where [:= :Observation_id "some_id"]
+;;      :limit 1
+;;      }))
+
 (defn insert-ts-obs [obs]
   (jdbc/query
    @conn
