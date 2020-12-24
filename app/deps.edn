@@ -7,6 +7,7 @@
         clj-yaml/clj-yaml           {:mvn/version "0.4.0"}
         org.clojure/data.csv        {:mvn/version "0.1.4"}
         http-kit/http-kit           {:mvn/version "2.5.0"}
+        com.zaxxer/HikariCP         {:mvn/version "3.3.1"}
         net.mikera/core.matrix      {:mvn/version "0.62.0"}
         honeysql/honeysql           {:mvn/version "0.9.8"}
         cheshire/cheshire           {:mvn/version "5.9.0"}

@@ -1,5 +1,7 @@
 (ns app.core
-  (:require [aidbox.sdk.core :as sdk])
+  (:require [aidbox.sdk.core :as sdk]
+            [app.db :as db]
+            [clojure.java.jdbc :as jdbc])
   (:gen-class))
 
 (def env
@@ -92,3 +94,14 @@
 
 (defn -main []
   (sdk/start* app-state ctx))
+
+(defonce conn (atom nil))
+(comment
+  (reset! conn
+          (db/datasource {:host (or (System/getenv "PGHOST") "localhost")
+                          :port (or (System/getenv "PGPORT") "5488")
+                          :user (or (System/getenv "PGUSER") "postgres")
+                          :password (or (System/getenv "PGPASSWORD") "postgres")
+                          :database (or (System/getenv "PGDATABASE") "devbox")}))
+  (jdbc/query @conn ["select count(*) from attribute"])
+  )
