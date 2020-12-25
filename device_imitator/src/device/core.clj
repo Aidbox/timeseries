@@ -206,6 +206,9 @@
 
 (comment
 
+
+  (mod 15 3)
+
   (parse-csv  "resources/csv/bidmc_01_Numerics.csv")
 
   (run-jobs (configure 15))

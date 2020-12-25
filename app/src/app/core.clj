@@ -362,7 +362,7 @@ and code = '131329';
   (doseq [n (range 200)]
     (prn "Load " n)
 
-    (time (count (with-open [reader (io/reader (data-file (or (+ 3100 n) 1)))]
+    (time (count (with-open [reader (io/reader (data-file (or (+ 3900 n) 1)))]
               (let [data (ecg-data  reader)]
                 (-> {:subject {:id (get-rand-pt-id)}
                      :id (gen-guid)

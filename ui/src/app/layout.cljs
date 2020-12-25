@@ -37,7 +37,7 @@
       [:li.nav-item.active
        [:a.sidebar-link
         {:default "",
-         :href "#/"}
+         :href "#/devices"}
         [:span.icon-holder [:i.c-pink-500.ti-palette] " "]
         [:span.title "Devices"]]]
 
