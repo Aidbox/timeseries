@@ -8,7 +8,12 @@
 
 (def app-styles
   (s/styles
-   []))
+   [{:.frame {:zoom "1.75"
+              :-ms-transform "scale(1.25)"
+              :-moz-transform "scale(1.25)"
+              :-o-transform "scale(1.25)"
+              :-webkit-transform "scale(1.25)"
+              :transform "scale(1.25)"}}]))
 
 (def sidebar
   [:div.sidebar
@@ -66,7 +71,6 @@
          [:a {:href "javascript:void(0);"} [:span "ECG"]]]
         [:li.nav-item.dropdown
          [:a {:href "javascript:void(0);"} [:span "EEG"] " "]]]]]]])
-
 
 (def header
   [:div.header.navbar
