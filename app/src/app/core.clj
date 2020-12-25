@@ -1,7 +1,11 @@
 (ns app.core
   (:require [aidbox.sdk.core :as sdk]
             [app.db :as db]
+            [clojure.java.io :as io]
+            [clojure.core.matrix :as matrix]
+            [clojure.data.csv :as csv]
             [honeysql.format :as hsformat]
+            [clojure.string :as str]
             [clojure.java.jdbc :as jdbc])
   (:gen-class))
 
@@ -170,5 +174,43 @@
   )
 
 
+(defn ecg-data [reader]
+  (->> reader
+       csv/read-csv
+       matrix/columns
+       (reduce
+        (fn [acc c] (assoc acc (keyword (first c)) (str/join " " (rest c))))
+        {})))
+
+
+(defn data-file [id]
+  (str "/Users/aitem/Work/hackaton/pydata/ptb-xl-1.0.1.physionet.org/csv/"  id ".csv"))
+
+
 (comment
-  (str (java.sql.Timestamp. (.getTime ( to-date "2016-06-06T01:39:47.01230Z")))))
+  (with-open [reader (io/reader (data-file 1))]
+    (let [data (ecg-data  reader)]
+      (prn {:subject {:id "some-ecg-patient"}
+            :id (gen-guid)
+            :effective {:instant "2016-06-06T01:39:47.000Z"}
+            :component
+            [{:code {:coding [{:code "131329"
+                               :system "urn:oid:2.16.840.1.113883.6.24"
+                               :display "MDC_ECG_ELEC_POTL_I"}]
+                     :value {:SampledData {:period 2
+                                           :data (:I  data)}}}}]}))))
+
+
+(comment
+ ;; [I II III AVR AVL AVF V1 V2 V3 V4 V5 V6]
+  (def file-path "/Users/aitem/Work/hackaton/pydata/ptb-xl-1.0.1.physionet.org/csv/1.csv")
+
+
+  (with-open [reader (io/reader file-path)]
+    (let [[header & content] (csv/read-csv reader)]
+      (println header)))
+
+
+
+
+  )
