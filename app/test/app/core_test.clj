@@ -41,8 +41,27 @@
      :valueQuantity_unit  "mmHg"}])
 
   (match
-   (sut/ts-2-observation
-    "some_id")
+   (sut/obs->fhir
+    [{:observation_id      "some_id"
+     :ts                  "2016-06-06T01:39:47.000Z"
+     :effectiveDateTime   "2016-06-06T01:39:47.000Z"
+     :code                "8480-6"
+     :system              "http://loinc.org"
+     :display             "Systolic blood pressure"
+     :patient_id          "patient-id"
+     :valuequantity_value 130
+     :valuequantity_unit  "mmHg"}
+    {:observation_id      "some_id"
+     :ts                  "2016-06-06T01:39:47.000Z"
+     :effectiveDateTime   "2016-06-06T01:39:47.000Z"
+     :code                "8462-4"
+     :system              "http://loinc.org"
+     :display             "Diastolic blood pressure"
+     :patient_id          "patient-id"
+     :valuequantity_value 70
+     :valuequantity_unit  "mmHg"}])
+
+
 
    {:id        "some_id"
     :subject   {:id "patient-id" :resourceType "Patient"}

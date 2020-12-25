@@ -64,12 +64,21 @@ SELECT create_hypertable('observation_data', 'ts');
 select count(*)
 from observation_data;
 ----
+\x
+select count(*)
+from observation;
+----
+\x
+truncate observation;
+----
+
 select distinct(patient_id)
 from observation_data;;
 ----
 \x
 select * from  observation_data limit 1;
 ----
+DROP VIEW if exists bpm_view CASCADE;
 truncate observation_data;
 ----
 select patient_id, (array_agg(smooth_bpm))[1]

@@ -1,6 +1,8 @@
 (ns app.core
   (:require [aidbox.sdk.core :as sdk]
             [app.db :as db]
+            [aidbox.sdk.db :as sddb]
+            [cheshire.core :as json]
             [honeysql.format :as hsformat]
             [clojure.java.jdbc :as jdbc])
   (:gen-class))
@@ -24,7 +26,9 @@
     :type "app"
     :operations
     {:create-ts-observation
-     {:method "POST" :path ["Observation"]}}}})
+     {:method "POST" :path ["Observation"]}
+     :get-ts-observation
+     {:method "GET" :path ["Observation" {:name :id}]}}}})
 
 (defn to-date [s]
   (-> s
@@ -102,27 +106,29 @@
         :display display}]}
      :value {:Quantity {:unit valuequantity_unit :value valuequantity_value}}}))
 
+
+(defn obs->fhir [ts-data]
+  (let [{:keys [observation_id patient_id]} (first ts-data)
+        resource {:resourceType "Observation"
+                  :id observation_id
+                  :subject      {:id patient_id :resourceType "Patient"}
+                  :status       "final"
+                  :effective    {:dateTime "2016-06-06T01:39:47.000Z"}
+                  :category
+                  [{:coding
+                    [{:code    "vital-signs"
+                      :system
+                      "http://terminology.hl7.org/CodeSystem/observation-category"
+                      :display "Vital Signs"}]}]}]
+     (assoc resource :component (mapv ts->component ts-data))))
+
 (defn ts-2-observation [observation-id]
-  (let [fhir-obs (jdbc/query @conn (hsformat/format
-                                    {:select [:*]
-                                     :from   [:observation]
-                                     :where  [:= :id observation-id]}))
-        {:keys [id resource resource_type]} fhir-obs
-        ts-obs (jdbc/query @conn (hsformat/format
+  (let [ts-obs (jdbc/query @conn (hsformat/format
                                   {:select [:*]
                                    :from [:observation_data]
-                                   :where [:= :Observation_id observation-id]}))
-        resource* (assoc resource :resourceType resource_type :id id)]
-    (assoc resource* :component (mapv ts->component ts-obs))))
+                                   :where [:= :Observation_id observation-id]}))]
+    (obs->fhir ts-obs)))
 
-;; (jdbc/query
-;;    @conn
-;;    (hsformat/format
-;;     {:select [:*]
-;;      :from [:observation_data]
-;;      ;; :where [:= :Observation_id "some_id"]
-;;      :limit 1
-;;      }))
 
 (defn insert-ts-obs [obs]
   (jdbc/query
@@ -138,6 +144,15 @@
 
   {:status 200
    :body (-> res observation-2-ts insert-ts-obs)})
+
+
+(defmethod sdk/endpoint
+  :get-ts-observation
+  [ctx {res :resource :as request}]
+  (let [{:keys [id]} (:route-params request)]
+    (def r request)
+    {:status 200
+     :body (ts-2-observation id)}))
 
 
 (defonce app-state (atom {}))
@@ -159,7 +174,6 @@
   (mk-connection conn)
 
   (jdbc/query @conn ["select count(*) from attribute"])
-
 
   (jdbc/query
    @conn
