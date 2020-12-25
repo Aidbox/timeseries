@@ -1,9 +1,15 @@
 (ns app.core
   (:require [aidbox.sdk.core :as sdk]
-            [app.db :as db]
+            [aidbox.sdk.crud :as crud]
             [aidbox.sdk.db :as sddb]
+            [app.db :as db]
+            [app.date :as date]
             [cheshire.core :as json]
+            [clojure.java.io :as io]
+            [clojure.core.matrix :as matrix]
+            [clojure.data.csv :as csv]
             [honeysql.format :as hsformat]
+            [clojure.string :as str]
             [clojure.java.jdbc :as jdbc])
   (:gen-class))
 
@@ -34,6 +40,13 @@
   (-> s
       java.time.Instant/parse
       java.util.Date/from))
+
+(defn add-ms [s ms]
+  (-> s
+    to-ts
+    (+ ms)
+    (java.util.Date. )))
+
 
 
 (defn to-ts [s]
@@ -78,6 +91,10 @@
     {:valueDateTime (:DateTime value)}
     ))
 
+(defn String->Number [str]
+  (let [n (Float/parseFloat str)]
+       (if (number? n) n nil)))
+
 (defn observation-2-ts [resource]
   (let [id (or (:id resource) (gen-guid))
         ts (or (get-in resource [:effective :dateTime])
@@ -87,14 +104,32 @@
         dates (mk-obs-date resource)
         component (or (:component resource) [resource])]
     (->> component
-         (map (fn [c]
-                (merge
-                 {:Observation_id id
-                  :ts ts
-                  :Patient_id pt_id}
-                 (mk-component-code c)
-                 dates
-                 (parse-value (:value c))))))))
+         (mapcat
+          (fn [c]
+            (if (get-in c [:value :SampledData])
+              ;; Parse SampledData
+              (let [period (get-in c [:value :SampledData :period])
+                    code (mk-component-code c)
+                    data (-> c
+                          (get-in [:value :SampledData :data])
+                          (str/split #" "))]
+                (map-indexed
+                 (fn [idx d]
+                   (merge
+                    {:Observation_id id
+                     :Patient_id pt_id
+                     :ts (add-ms ts (* period idx))}
+                    code
+                    {:valueSampledData_data (String->Number d)}))
+                 data))
+              ;; Parse regular value
+              [(merge
+                {:Observation_id id
+                 :ts ts
+                 :Patient_id pt_id}
+                (mk-component-code c)
+                dates
+                (parse-value (:value c)))]))))))
 
 (defn ts->component [ts-record]
   (let [{:keys [display system code valuequantity_unit valuequantity_value]} ts-record]
@@ -130,13 +165,18 @@
     (obs->fhir ts-obs)))
 
 
+(partition 3 3 nil [1 2 3 4 5 6 7 8 9 0])
 (defn insert-ts-obs [obs]
-  (jdbc/query
-   @conn
-   (hsformat/format
-    {:insert-into :observation_data
-     :values obs
-     :returning [:*]})))
+  (->> obs
+       (partition 1000 1000 nil)
+       (mapcat
+        (fn [part]
+          (jdbc/query
+           @conn
+           (hsformat/format
+            {:insert-into :observation_data
+             :values part
+             :returning [:*]}))))))
 
 (defmethod sdk/endpoint
   :create-ts-observation
@@ -183,6 +223,102 @@
      :returning [:*]}))
   )
 
+(defn data-file [id]
+  (str "/Users/aitem/Work/hackaton/pydata/ptb-xl-1.0.1.physionet.org/csv/"  id ".csv"))
+
+
+(defn ecg-data [reader]
+  (->> reader
+       csv/read-csv
+       matrix/columns
+       (reduce
+        (fn [acc c]
+          (assoc acc (keyword (first c)) (str/join " " (rest c))))
+        {})))
+
+(def req-ctx
+  {:app {}
+   :client {:id     "root"
+            :secret "secret"}
+   :box {:base-url  "http://localhost:8888"}})
+
+
+
 
 (comment
-  (str (java.sql.Timestamp. (.getTime ( to-date "2016-06-06T01:39:47.01230Z")))))
+  (doseq [n (range 100)]
+    (prn "Load " n)
+
+    (time (count (with-open [reader (io/reader (data-file (or (+ 100 n) 1)))]
+              (let [data (ecg-data  reader)]
+                (-> {:subject {:id (gen-guid)}
+                     :id (gen-guid)
+                     :effective {:instant (str (date/rand-date "2020-06-01" "2020-12-01")
+                                               "T15:00:00.000Z")}
+
+                     :component
+                     [{:code {:coding [{:code "131329"
+                                        :system "urn:oid:2.16.840.1.113883.6.24"
+                                        :display "I"}]}
+                       :value {:SampledData {:period 2 :data (:I  data)}}}
+                      {:code {:coding [{:code "131330"
+                                        :system "urn:oid:2.16.840.1.113883.6.24"
+                                        :display "II"}]}
+                       :value {:SampledData {:period 2 :data (:II  data)}}}
+                      {:code {:coding [{:code "131331"
+                                        :system "urn:oid:2.16.840.1.113883.6.24"
+                                        :display "III"}]}
+                       :value {:SampledData {:period 2 :data (:III  data)}}}
+                      {:code {:coding [{:code "131332"
+                                        :system "urn:oid:2.16.840.1.113883.6.24"
+                                        :display "AVR"}]}
+                       :value {:SampledData {:period 2 :data (:AVR  data)}}}
+                      {:code {:coding [{:code "131333"
+                                        :system "urn:oid:2.16.840.1.113883.6.24"
+                                        :display "AVL"}]}
+                       :value {:SampledData {:period 2 :data (:AVL  data)}}}
+                      {:code {:coding [{:code "131334"
+                                        :system "urn:oid:2.16.840.1.113883.6.24"
+                                        :display "AVF"}]}
+                       :value {:SampledData {:period 2 :data (:AVF  data)}}}
+                      ;; V1-V6
+                      {:code {:coding [{:code "131341"
+                                        :system "urn:oid:2.16.840.1.113883.6.24"
+                                        :display "V1"}]}
+                       :value {:SampledData {:period 2 :data (:V1  data)}}}
+                      {:code {:coding [{:code "131342"
+                                        :system "urn:oid:2.16.840.1.113883.6.24"
+                                        :display "V2"}]}
+                       :value {:SampledData {:period 2 :data (:V2  data)}}}
+                      {:code {:coding [{:code "131343"
+                                        :system "urn:oid:2.16.840.1.113883.6.24"
+                                        :display "V3"}]}
+                       :value {:SampledData {:period 2 :data (:V3  data)}}}
+                      {:code {:coding [{:code "131344"
+                                        :system "urn:oid:2.16.840.1.113883.6.24"
+                                        :display "V4"}]}
+                       :value {:SampledData {:period 2 :data (:V4  data)}}}
+                      {:code {:coding [{:code "131345"
+                                        :system "urn:oid:2.16.840.1.113883.6.24"
+                                        :display "V5"}]}
+                       :value {:SampledData {:period 2 :data (:V5  data)}}}
+                      {:code {:coding [{:code "131346"
+                                        :system "urn:oid:2.16.840.1.113883.6.24"
+                                        :display "V6"}]}
+                       :value {:SampledData {:period 2 :data (:V6  data)}}}
+                      ]}
+
+                    observation-2-ts
+                    insert-ts-obs
+                    )))))))
+
+
+(comment
+ ;; [V1 V2 V3 V4 V5 V6]
+  (def file-path "/Users/aitem/Work/hackaton/pydata/ptb-xl-1.0.1.physionet.org/csv/1.csv")
+
+
+  (with-open [reader (io/reader file-path)]
+    (let [[header & content] (csv/read-csv reader)]
+      (println header)))
+  )
