@@ -19,12 +19,14 @@
 
 (pages/reg-subs-page
  model/view-page
- (fn [{:keys [alerts]}]
+ (fn [{:keys [alerts]} req]
    [:div.row
     [:div.col-md-12
      [:div.bd.bgc-white
       (for [[p-id results] alerts]
-        (let [results* (sort-by :time results)
+        (let [type (get-in req [:params :route :type])
+              view-name (str type "_view")
+              results* (sort-by :time results)
               start    (:time (first results*))
               end      (:time (last results*))
               avgs     (map :avg results*)
@@ -51,15 +53,8 @@
                [:div.ai-fs.gapY-5.layers.bgc-grey-200 {:style {:display        "flex"
                                                                :flex-direction "row"
                                                                :flex-wrap      "wrap"}}
-                [:iframe  {:src          (str "http://localhost:3000/d-solo/rb_qDpxGz/new-dashboard-copy1?orgId=1&var-Patient=" p-id "&from=1608925650885&to=1608925839368&panelId=11")
-                           :width        "450"
+                [:iframe  {:src          (str "http://localhost:3000/d-solo/rb_qDpxGz/new-dashboard-copy1?orgId=1&var-Patient=" p-id "&var-View=" view-name "&from=now-10m&to=now&panelId=11")
+                           :width        "100%"
                            :height       "200"
                            :frameborder= "0"
-                           :style        {:border :none}}]
-                #_(for [{:keys [time avg patient_id]} (sort-by :time results)]
-                    [:div.layer.mR-15 {:key (str time patient_id)}
-                     [:div.ai-c.bdrs-2.bgc-white.fxw-nw.pX-10.pY-3.peers {:class "lh-3/2"}
-                      [:div.peer.mR-10
-                       [:small (->local-time time)]]
-                      [:div.peer-greed
-                       [:span (format-avg avg)]]]])]]]]]]))]]]))
+                           :style        {:border :none}}]]]]]]]))]]]))
