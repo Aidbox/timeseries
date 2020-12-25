@@ -44,14 +44,15 @@
      :get-resp-personal {:method "GET" :path ["$resp" {:name :patient-id}]}
 
      :get-oxy-all      {:method "GET" :path ["$oxy"]}
-     :get-oxy-personal {:method "GET" :path ["$oxy" {:name :patient-id}]}}}})
+     :get-oxy-personal {:method "GET" :path ["$oxy" {:name :patient-id}]}
+
+     :ecg              {:method "GET" :path ["$ecg" {:name :patient-id}]}}}})
 
 
 (defn to-date [s]
   (-> s
       java.time.Instant/parse
       java.util.Date/from))
-
 
 (defn to-ts [s]
   (.getTime ( to-date s)))
@@ -72,7 +73,7 @@
 
 (defn mk-obs-date [obs]
   {:effectiveDateTime     (get-in obs [:effective :dateTime])
-   :effectiveInstant      (get-in obs [:effective :Instant])
+   :effectiveInstant      (get-in obs [:effective :instant])
    :effectivePeriod_start (get-in obs [:effective :Period :start])
    :effectivePeriod_end   (get-in obs [:effective :Period :end])})
 
@@ -126,6 +127,7 @@
                 (map-indexed
                  (fn [idx d]
                    (merge
+                    dates
                     {:Observation_id id
                      :Patient_id pt_id
                      :ts (add-ms ts (* period idx))}
@@ -254,8 +256,6 @@
             :secret "secret"}
    :box {:base-url  "http://localhost:8888"}})
 
-
-
 (defn get-view [view]
   (query
    (format
@@ -283,7 +283,6 @@
     {:status 200
      :body (get-personal-view "hr_view" patient-id)}))
 
-
 (defmethod sdk/endpoint
   :get-pulse-all
   [ctx request]
@@ -296,7 +295,6 @@
   (let [{:keys [patient-id]} (:route-params request)]
     {:status 200
      :body (get-personal-view "pulse_view" patient-id)}))
-
 
 (defmethod sdk/endpoint
   :get-resp-all
@@ -311,12 +309,25 @@
     {:status 200
      :body (get-personal-view "resp_view" patient-id)}))
 
-
 (defmethod sdk/endpoint
   :get-oxy-all
   [ctx request]
   {:status 200
    :body (get-view "oxy_view")})
+
+(defmethod sdk/endpoint
+  :ecg
+  [ctx request]
+  (let [{:keys [patient-id]} (:route-params request)]
+    {:status 200
+     :body (jdbc/query
+            @conn
+            [ "
+select distinct(observation_id), effectiveinstant
+from observation_data
+where patient_id = ?
+and code = '131329';
+" patient-id])}))
 
 (defmethod sdk/endpoint
   :get-oxy-personal
@@ -325,13 +336,20 @@
     {:status 200
      :body (get-personal-view "oxy_view" patient-id)}))
 
+(defn get-rand-pt-id []
+  (:id (first (jdbc/query @conn "select id from patient order by random() limit 1"))))
+
+
+
 (comment
+  (get-rand-pt-id)
+
   (doseq [n (range 100)]
     (prn "Load " n)
 
     (time (count (with-open [reader (io/reader (data-file (or (+ 100 n) 1)))]
               (let [data (ecg-data  reader)]
-                (-> {:subject {:id (gen-guid)}
+                (-> {:subject {:id (get-rand-pt-id)}
                      :id (gen-guid)
                      :effective {:instant (str (date/rand-date "2020-06-01" "2020-12-01")
                                                "T15:00:00.000Z")}
@@ -394,6 +412,7 @@
 
 
 (comment
+(sdk/start* app-state ctx)
  ;; [V1 V2 V3 V4 V5 V6]
   (def file-path "/Users/aitem/Work/hackaton/pydata/ptb-xl-1.0.1.physionet.org/csv/1.csv")
 
