@@ -38,7 +38,8 @@
             (:name (device-ico did))]
            [:div
             [:span.mR-20 {:style {:color "#72777a"}}
-             (str/replace (str (get-in p [:name 0 :given 0]) " " (get-in p [:name 0 :family])) #"\d+" "")
+             [:a {:href (str "#/patient/" (:id p))}
+              (str/replace (str (get-in p [:name 0 :given 0]) " " (get-in p [:name 0 :family])) #"\d+" "")]
              [:i.ti-user.mR-5.mL-5]
              (str (first (str/capitalize (or (:gender p) ""))) " " (get-age (:birthDate p)) "y/o")]
 
