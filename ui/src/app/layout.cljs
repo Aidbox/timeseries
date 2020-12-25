@@ -20,9 +20,9 @@
          {:href "https://colorlib.com/polygon/adminator/index.html"}]
         [:div.peers.ai-c.fxw-nw
          [:div.peer
-          #_[:div.logo
-           [:img {:alt "", :src "assets/static/images/logo.png"}]]]
-         [:div.peer.peer-greed [:h5.lh-1.mB-0.logo-text "Aidbox ROCKS"]]]]
+          [:div.logo
+           [:img {:width "50px" :height "50px" :alt "", :src "/heart.svg"}]]]
+         [:div.peer.peer-greed [:h5.ml-4.lh-1.mB-0.logo-text {:style {:color "#313435" :font-size "24px" :font-weight "300"}} "Aidbox & TS"]]]]
        [:div.peer
         [:div.mobile-toggle.sidebar-toggle
          [:a.td-n {:href ""} [:i.ti-arrow-circle-left]]]]]]

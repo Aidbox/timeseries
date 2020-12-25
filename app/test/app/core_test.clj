@@ -40,7 +40,34 @@
      :valueQuantity_value 70
      :valueQuantity_unit  "mmHg"}])
 
+
   (match
+   (sut/observation-2-ts
+    {:subject {:id "some-ecg-patient"},
+     :id "c4670aa9-ee97-4cc8-8a23-e8c55615189b",
+     :effective {:instant "2020-06-06T01:39:47.000Z"},
+     :component
+     [{:code
+       {:coding
+        [{:code "131329"
+          :system "urn:oid:2.16.840.1.113883.6.24"
+          :display "MDC_ECG_ELEC_POTL_I"}]}
+       :value
+       {:SampledData
+        {:period 2
+         :data
+         "-0.115 -0.116 -0.117 -0.118 -0.115 -0.115 -0.115 -0.117 -0.109 -0.108 -0.13 -0.127 -0.121 -0.12 -0.12 -0.12 -0.112 -0.109 -0.111"}}}]})
+   [{:valueSampledData_data -0.115}
+    {:valueSampledData_data -0.116}
+    {:valueSampledData_data -0.117}
+    {:valueSampledData_data -0.118}
+    {:valueSampledData_data -0.115}
+    {:valueSampledData_data -0.115}
+    {:valueSampledData_data -0.115}
+    {:valueSampledData_data -0.117}
+    {:valueSampledData_data -0.109}])
+
+  #_(match
    (sut/ts-2-observation
     "some_id")
 
@@ -82,4 +109,3 @@
   ;; ;; :observation_id = "5a13666f-a560-475a-bb58-a3ef750511ed"
   ;; ;; :valuequantity_value = 101M
   ;; :valueperiod_end = nil
-

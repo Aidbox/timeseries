@@ -50,15 +50,19 @@ CREATE TABLE observation_data (
  valueDateTime             TIMESTAMPTZ,
  -- -- valuePeriod
  valuePeriod_start         TIMESTAMPTZ,
- valuePeriod_end           TIMESTAMPTZ
+ valuePeriod_end           TIMESTAMPTZ,
 
  -- -- valueRange
  -- -- valueRatio
  -- -- valueSampledData
+ valueSampledData_data     DECIMAL
 
 );
 
 SELECT create_hypertable('observation_data', 'ts');
+SELECT add_dimension('observation_data', 'Patient_id',     number_partitions => 200, if_not_exists => true);
+SELECT add_dimension('observation_data', 'Observation_id', number_partitions => 200, if_not_exists => true);
+
 ----
 \x
 select count(*)
