@@ -28,29 +28,39 @@
 (def ctx
   {:env env
    :manifest
-   {:id "timeseries"
+   {:id   "timeseries"
     :type "app"
     :operations
-    {:create-ts-observation
-     {:method "POST" :path ["Observation"]}
-     :get-ts-observation
-     {:method "GET" :path ["Observation" {:name :id}]}}}})
+    {:create-ts-observation {:method "POST" :path ["Observation"]}
+     :get-ts-observation    {:method "GET" :path ["Observation" {:name :id}]}
+
+     :get-hr-all      {:method "GET" :path ["$hr"]}
+     :get-hr-personal {:method "GET" :path ["$hr" {:name :patient-id}]}
+
+     :get-pulse-all      {:method "GET" :path ["$pulse"]}
+     :get-pulse-personal {:method "GET" :path ["$pulse" {:name :patient-id}]}
+
+     :get-resp-all      {:method "GET" :path ["$resp"]}
+     :get-resp-personal {:method "GET" :path ["$resp" {:name :patient-id}]}
+
+     :get-oxy-all      {:method "GET" :path ["$oxy"]}
+     :get-oxy-personal {:method "GET" :path ["$oxy" {:name :patient-id}]}}}})
+
 
 (defn to-date [s]
   (-> s
       java.time.Instant/parse
       java.util.Date/from))
 
+
+(defn to-ts [s]
+  (.getTime ( to-date s)))
+
 (defn add-ms [s ms]
   (-> s
     to-ts
     (+ ms)
     (java.util.Date. )))
-
-
-
-(defn to-ts [s]
-  (.getTime ( to-date s)))
 
 (defn gen-guid []
   (str (java.util.UUID/randomUUID)))
@@ -164,8 +174,11 @@
                                    :where [:= :Observation_id observation-id]}))]
     (obs->fhir ts-obs)))
 
+(defn query [sql]
+  (jdbc/query @conn (if (string? sql) sql (hsformat/format sql))))
 
-(partition 3 3 nil [1 2 3 4 5 6 7 8 9 0])
+
+
 (defn insert-ts-obs [obs]
   (->> obs
        (partition 1000 1000 nil)
@@ -190,7 +203,6 @@
   :get-ts-observation
   [ctx {res :resource :as request}]
   (let [{:keys [id]} (:route-params request)]
-    (def r request)
     {:status 200
      :body (ts-2-observation id)}))
 
@@ -244,6 +256,74 @@
 
 
 
+(defn get-view [view]
+  (query
+   (format
+    "select *
+     from %s
+     where time > now() - interval '10 minutes'" view)))
+
+(defn get-personal-view [view pt-id]
+  (query
+   (format
+    "select *
+     from  %s
+     where time > now() - interval '10 minutes' and patient_id = '%s'" view pt-id)))
+
+(defmethod sdk/endpoint
+  :get-hr-all
+  [ctx request]
+  {:status 200
+   :body (get-view "hr_view")})
+
+(defmethod sdk/endpoint
+  :get-hr-personal
+  [ctx request]
+  (let [{:keys [patient-id]} (:route-params request)]
+    {:status 200
+     :body (get-personal-view "hr_view" patient-id)}))
+
+
+(defmethod sdk/endpoint
+  :get-pulse-all
+  [ctx request]
+  {:status 200
+   :body (get-view "pulse_view")})
+
+(defmethod sdk/endpoint
+  :get-pulse-personal
+  [ctx request]
+  (let [{:keys [patient-id]} (:route-params request)]
+    {:status 200
+     :body (get-personal-view "pulse_view" patient-id)}))
+
+
+(defmethod sdk/endpoint
+  :get-resp-all
+  [ctx request]
+  {:status 200
+   :body (get-view "resp_view")})
+
+(defmethod sdk/endpoint
+  :get-resp-personal
+  [ctx request]
+  (let [{:keys [patient-id]} (:route-params request)]
+    {:status 200
+     :body (get-personal-view "resp_view" patient-id)}))
+
+
+(defmethod sdk/endpoint
+  :get-oxy-all
+  [ctx request]
+  {:status 200
+   :body (get-view "oxy_view")})
+
+(defmethod sdk/endpoint
+  :get-oxy-personal
+  [ctx request]
+  (let [{:keys [patient-id]} (:route-params request)]
+    {:status 200
+     :body (get-personal-view "oxy_view" patient-id)}))
 
 (comment
   (doseq [n (range 100)]

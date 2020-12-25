@@ -82,7 +82,11 @@ from observation_data;;
 \x
 select * from  observation_data limit 1;
 ----
-DROP VIEW if exists bpm_view CASCADE;
+DROP VIEW if exists hr_view CASCADE;
+DROP VIEW if exists pulse_view CASCADE;
+DROP VIEW if exists resp_view CASCADE;
+DROP VIEW if exists oxy_view CASCADE;
+
 truncate observation_data;
 ----
 select patient_id, (array_agg(smooth_bpm))[1]
@@ -132,24 +136,65 @@ FROM
   observation_data
 
 ----
-DROP VIEW if exists bpm_view CASCADE;
+DROP VIEW if exists hr_view CASCADE;
 
-CREATE VIEW bpm_view WITH
+CREATE VIEW hr_view WITH
 (timescaledb.continuous, timescaledb.refresh_interval = '30s')
 AS
 SELECT
   time_bucket('10s', ts) as time,
   Patient_id,
-  AVG(valueQuantity_value) as avg_bpm
+  AVG(valueQuantity_value) as avg
 FROM observation_data
-WHERE code = '8867-4' -- heart rate
+WHERE code = '8867-4'
 group by patient_id, time_bucket('10s', ts)
 HAVING AVG(valueQuantity_value) > 100
---ORDER BY time
 ----
-select * from bpm_view
-where patient_id = 'bd267d2a-ef47-4df6-9ea0-b221bd4bef21';
+DROP VIEW if exists pulse_view CASCADE;
+
+CREATE VIEW pulse_view WITH
+(timescaledb.continuous, timescaledb.refresh_interval = '30s')
+AS
+SELECT
+  time_bucket('10s', ts) as time,
+  Patient_id,
+  AVG(valueQuantity_value) as avg
+FROM observation_data
+WHERE code = '8867-3' -- pulse
+group by patient_id, time_bucket('10s', ts)
+HAVING AVG(valueQuantity_value) > 100
+----
+DROP VIEW if exists resp_view CASCADE;
+
+CREATE VIEW resp_view WITH
+(timescaledb.continuous, timescaledb.refresh_interval = '30s')
+AS
+SELECT
+  time_bucket('10s', ts) as time,
+  Patient_id,
+  AVG(valueQuantity_value) as avg
+FROM observation_data
+WHERE code = '9279-1' -- resp
+group by patient_id, time_bucket('10s', ts)
+HAVING AVG(valueQuantity_value) > 20 or AVG(valueQuantity_value) < 10
+----
+DROP VIEW if exists oxy_view CASCADE;
+
+CREATE VIEW oxy_view WITH
+(timescaledb.continuous, timescaledb.refresh_interval = '30s')
+AS
+SELECT
+  time_bucket('10s', ts) as time,
+  Patient_id,
+  AVG(valueQuantity_value) as avg
+FROM observation_data
+WHERE code = '2708-6' -- resp
+group by patient_id, time_bucket('10s', ts)
+HAVING AVG(valueQuantity_value) < 96
+
 ----
 \x
 SELECT * FROM timescaledb_information.continuous_aggregate_stats;
+----
+----
 ----
