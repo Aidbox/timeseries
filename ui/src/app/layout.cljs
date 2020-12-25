@@ -4,6 +4,7 @@
             [zframes.routing :as zr]
             [reagent.core :as r]
             [re-frame.core :as rf]
+            [app.pages.index.model :as index]
             [app.auth :as auth]))
 
 (def app-styles
@@ -49,9 +50,13 @@
         " "
         [:span.arrow [:i.ti-angle-right]]]
        [:ul.dropdown-menu
-        [:li [:a {:href "#/"} "Heart Rate "
-                  [:span.d-ib.lh-0.va-m.fw-600.bdrs-10em.pX-10.pY-10.bgc-red-50.c-red-500 "4"]]]
-        [:li [:a {:href "#/"} "Oxygen saturation "
+        [:li [:a {:href "#/alert/hr"} "Heart Rate "
+              [:span.d-ib.lh-0.va-m.fw-600.bdrs-10em.pX-10.pY-10.bgc-red-50.c-red-500 "4"]]]
+        [:li [:a {:href "#/alert/pulse"} "Pulse"
+              [:span.d-ib.lh-0.va-m.fw-600.bdrs-10em.pX-10.pY-10.bgc-purple-50.c-purple-500 "3"]]]
+        [:li [:a {:href "#/alert/resp"} "Respiratory rate "
+              [:span.d-ib.lh-0.va-m.fw-600.bdrs-10em.pX-10.pY-10.bgc-yellow-50.c-yellow-500 "1"]]]
+        [:li [:a {:href "#/alert/oxy"} "Oxygen saturation "
               [:span.d-ib.lh-0.va-m.fw-600.bdrs-10em.pX-10.pY-10.bgc-green-50.c-green-500 "10"]]]]]
 
       [:li.nav-item.dropdown.open

@@ -12,7 +12,7 @@
       (for [p (:pts page)]
         [:a {:key (:id p)
              :href (str "#/patient/" (:id p))}
-         [:div.pX-30.pY-20.peers.ai-c.bdB.bgcH-grey-100.cur-p ;;.jc-sb
+         [:div.pX-30.pY-20.peers.ai-c.bdB.bgcH-grey-100.cur-p
           [:div.peer.mR-20
            [:img.bdrs-50p.w-3r.h-3r {:src (str "https://i.pravatar.cc/150?u=" (:id p))}]]
           [:div.peer
@@ -21,11 +21,7 @@
             (get-in p [:name 0 :given 0])
             " "
             (get-in p [:name 0 :family])
-            ]]
-          ]]
-
-
-        )]]
+            ]]]])]]
 
 
 

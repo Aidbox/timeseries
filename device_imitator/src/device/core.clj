@@ -16,13 +16,38 @@
                :dataset-path  "resources/csv/bidmc_02_Numerics.csv"}}})
 
 
+(def patients
+  ["d681d725-8353-4996-ae13-a9450efe83d8"
+ "d7c00182-eb42-40db-a1a8-32e34d50c79c"
+ "d88b850b-f613-4e33-ad19-cbeadc80ba70"
+ "d9b90399-0504-4f1e-bf52-2f45354994dd"
+ "e5c09aa2-9679-4e25-99b9-cc4dc2493db7"
+ "e9adac47-eb98-4fce-b871-512226086c97"
+ "ea777ccd-5156-461f-a09f-67bbcaae13dc"
+ "ec0115d1-ac56-477e-b27c-0f5c51c0c216"
+ "ecd7dffa-53ef-4590-948d-2594265d767b"
+ "ed3cec2f-463b-4387-810c-2d519530447a"
+ "ef7867d5-2aa4-4963-a041-f6c4184dd956"
+ "efb65684-9cef-4e1a-86dd-920fd907696d"
+ "efe70546-195b-40b4-9437-9aed9eb55862"
+ "f0441407-3b1b-40a9-8b44-cd5ce133988d"
+ "f3071490-2b4a-48d3-b3c1-71389efdfb76"
+ "f4c654be-9a46-467e-92fc-fde5bb291a1f"
+ "f6315469-d594-422a-ba9f-e6cc7548aec1"
+ "f715403a-d2d0-4c8f-8fd1-9ee4747fc161"
+ "f73ee0fa-a22a-4cba-86cc-11909e2c914e"
+ "f83ce939-05b8-4428-805b-f2f118de9416"
+ "f9595e93-f819-4714-9756-973709b05f9d"
+ "fb675852-247b-4dd4-a0ac-45865d0a389a"
+ "fc47806b-3b22-4003-9ff6-5e9c927a8677"
+ "fd22f7f8-70a6-4d45-b818-8be4eb2ed0ea"])
 
 (defn configure [n]
   {:box-url "http://localhost:8888"
    :jobs (reduce
           (fn [acc v]
             (assoc acc v
-                   {:patient-id (gen-guid)
+                   {:patient-id (get patients v)
                     :dataset-path (str "resources/csv/bidmc_"  (format "%02d" v) "_Numerics.csv")}))
           {}
           (range 1 (inc n)))})
@@ -159,8 +184,9 @@
 
   (parse-csv  "resources/csv/bidmc_01_Numerics.csv")
 
-  (run-jobs (configure 50))
+  (run-jobs (configure 10))
 
+  (for [x {:a [1 2] :b [2 3]}] x)
   (prn 1)
 
   (build-observation {:patient-id   "333"

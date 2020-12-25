@@ -75,10 +75,15 @@ from observation_data;
 ----
 \x
 select count(*)
-from observation;
+from patient;
 ----
 \x
-truncate observation;
+truncate patient;
+----
+delete from patient
+where id in (select id from patient limit 100)
+----
+select id from patient;
 ----
 
 select distinct(patient_id)
@@ -153,8 +158,8 @@ SELECT
 FROM observation_data
 WHERE code = '8867-4'
 group by patient_id, time_bucket('10s', ts)
-HAVING AVG(valueQuantity_value) > 100
-----
+HAVING AVG(valueQuantity_value) > 100;
+
 DROP VIEW if exists pulse_view CASCADE;
 
 CREATE VIEW pulse_view WITH
@@ -167,8 +172,8 @@ SELECT
 FROM observation_data
 WHERE code = '8867-3' -- pulse
 group by patient_id, time_bucket('10s', ts)
-HAVING AVG(valueQuantity_value) > 100
-----
+HAVING AVG(valueQuantity_value) > 100;
+
 DROP VIEW if exists resp_view CASCADE;
 
 CREATE VIEW resp_view WITH
@@ -181,8 +186,8 @@ SELECT
 FROM observation_data
 WHERE code = '9279-1' -- resp
 group by patient_id, time_bucket('10s', ts)
-HAVING AVG(valueQuantity_value) > 20 or AVG(valueQuantity_value) < 10
-----
+HAVING AVG(valueQuantity_value) > 20 or AVG(valueQuantity_value) < 10;
+
 DROP VIEW if exists oxy_view CASCADE;
 
 CREATE VIEW oxy_view WITH
@@ -195,7 +200,7 @@ SELECT
 FROM observation_data
 WHERE code = '2708-6' -- resp
 group by patient_id, time_bucket('10s', ts)
-HAVING AVG(valueQuantity_value) < 96
+HAVING AVG(valueQuantity_value) < 96;
 
 ----
 \x

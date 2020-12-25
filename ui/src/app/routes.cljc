@@ -6,4 +6,7 @@
    "patient"   {:. :app.pages.patient.model/index-page
                 :layout     :main
                 [:id] {:layout     :main
-                       :. :app.pages.patient.model/view-page}}})
+                       :. :app.pages.patient.model/view-page}}
+   "alert"     {:layout :main
+                [:type] {:layout :main
+                         :. :app.pages.alert.model/view-page}}})
