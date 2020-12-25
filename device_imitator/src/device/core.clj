@@ -69,6 +69,7 @@
           (fn [acc v]
             (assoc acc v
                    {:patient-id ( get ids v)
+                    :device-id ( get ids v)
                     :dataset-path (str "resources/csv/bidmc_"  (format "%02d" v) "_Numerics.csv")}))
           {}
           (range 1 (inc n)))})
@@ -130,6 +131,7 @@
         params             (remove #(= "NaN" (val %)) (dissoc dataset :rel-time))]
     {:resourceType "Observation"
      :subject      {:id patient-id :resourceType "Patient"}
+     :device       {:id patient-id :resourceType "Device"}
      :status       "final"
      :effective    {:dateTime date-time}
      :category

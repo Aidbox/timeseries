@@ -13,7 +13,7 @@
 
 (pages/reg-subs-page
  model/index-page
- (fn [page _]
+ (fn [{d :d :as  page} _]
    [:div.row
     [:div.col-md-12
      [:div.bd.bgc-white
@@ -54,11 +54,12 @@
               [:span.mR-5 {:style {:font-size "16px"
                                    :font-weight "300"}} "MRN"]
               [:span.mR-20 mrn]])]
-          [:div.peer
+          (when (get d (:id p))
+              [:div.peer
 
-           [:iframe
-            {:src (str "http://localhost:3000/d-solo/dLE5W0xMk/devices?orgId=1&from=now-5m&to=now&var-patient_id=" (:id p) "&refresh=5s&panelId=4")
-             :height "100px"
-             :width "400px"
-             :frameBorder   "0"}]]
+            [:iframe
+             {:src (str "http://localhost:3000/d-solo/dLE5W0xMk/devices?orgId=1&from=now-5m&to=now&var-patient_id=" (:id p) "&refresh=5s&panelId=4")
+              :height "100px"
+              :width "400px"
+              :frameBorder   "0"}]])
           ]])]]]))

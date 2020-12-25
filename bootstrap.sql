@@ -11,6 +11,9 @@ DROP VIEW if exists pulse_view CASCADE;
 DROP VIEW if exists resp_view CASCADE;
 DROP VIEW if exists oxy_view CASCADE;
 ----
+ALTER TABLE observation_data
+ADD COLUMN device_id text;
+----
 
 DROP table if exists observation_data;
 
@@ -241,6 +244,12 @@ select 1;
 create index obsdatacode on observation_data (code);
 ----
 analyze observation_data;
+----
+\x
+select distinct device_id
+from observation_data
+where   ts between (NOW() - INTERVAL '5 minute') and now()
+limit 20;
 ----
 \x
 SELECT * FROM timescaledb_information.continuous_aggregate_stats;

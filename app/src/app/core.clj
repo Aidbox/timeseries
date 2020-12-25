@@ -33,6 +33,7 @@
     :operations
     {:create-ts-observation {:method "POST" :path ["Observation"]}
      :get-ts-observation    {:method "GET" :path ["Observation" {:name :id}]}
+     :devices               {:method "GET" :path ["$devices"]}
 
      :get-hr-all      {:method "GET" :path ["$hr"]}
      :get-hr-personal {:method "GET" :path ["$hr" {:name :patient-id}]}
@@ -112,6 +113,7 @@
                (get-in resource [:effective :instant])
                (get-in resource [:effective :Period :start]))
         pt_id (get-in resource [:subject :id])
+        d_id (get-in resource [:device :id])
         dates (mk-obs-date resource)
         component (or (:component resource) [resource])]
     (->> component
@@ -138,6 +140,7 @@
               [(merge
                 {:Observation_id id
                  :ts ts
+                 :Device_id d_id
                  :Patient_id pt_id}
                 (mk-component-code c)
                 dates
@@ -207,6 +210,18 @@
   (let [{:keys [id]} (:route-params request)]
     {:status 200
      :body (ts-2-observation id)}))
+
+(defmethod sdk/endpoint
+  :devices
+  [ctx _]
+  {:status 200
+   :body
+   (jdbc/query
+    @conn
+    "select distinct device_id
+from observation_data
+where   ts between (NOW() - INTERVAL '5 minute') and now()
+limit 20; ")})
 
 
 (defonce app-state (atom {}))

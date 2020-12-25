@@ -7,11 +7,19 @@
 (rf/reg-event-fx
  index-page
  (fn [{db :db} [pid phase params]]
-   {:json/fetch {:uri "/Patient"
-                 :req-id pid}}))
+   {:json/fetch [{:uri "/Patient"
+                   :req-id pid}
+                 {:uri "/$devices"
+                  :req-id ::devices}
+                 ]}))
 
 (rf/reg-sub
  index-page
  :<- [:xhr/response index-page]
- (fn [pts _]
-   {:pts (->> pts :data :entry (map :resource))}))
+ :<- [:xhr/response ::devices]
+ (fn [[pts devices] _]
+   {:pts (->> pts :data :entry (map :resource))
+    :d (->> devices
+            :data
+            (reduce
+             (fn [acc d] (assoc acc (:device_id d) true)) {}))}))
