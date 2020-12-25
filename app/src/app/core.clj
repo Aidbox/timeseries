@@ -344,10 +344,10 @@ and code = '131329';
 (comment
   (get-rand-pt-id)
 
-  (doseq [n (range 100)]
+  (doseq [n (range 200)]
     (prn "Load " n)
 
-    (time (count (with-open [reader (io/reader (data-file (or (+ 100 n) 1)))]
+    (time (count (with-open [reader (io/reader (data-file (or (+ 800 n) 1)))]
               (let [data (ecg-data  reader)]
                 (-> {:subject {:id (get-rand-pt-id)}
                      :id (gen-guid)
