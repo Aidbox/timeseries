@@ -1,6 +1,8 @@
 ---- db: -h localhost -p 5488 -U postgres devbox
 \d+ patient
 ----
+select id from patient;
+----
 \c devbox
 CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;
 ----
@@ -8,6 +10,7 @@ DROP VIEW if exists hr_view CASCADE;
 DROP VIEW if exists pulse_view CASCADE;
 DROP VIEW if exists resp_view CASCADE;
 DROP VIEW if exists oxy_view CASCADE;
+----
 
 DROP table if exists observation_data;
 
@@ -69,6 +72,15 @@ SELECT add_dimension('observation_data', 'Patient_id',     number_partitions => 
 SELECT add_dimension('observation_data', 'Observation_id', number_partitions => 200, if_not_exists => true);
 
 ----
+\d+ observation_data
+----
+
+SELECT
+pid ,wait_event, age(clock_timestamp(), query_start) ,query
+FROM pg_stat_activity
+WHERE query != '<IDLE>' AND query NOT ILIKE '%pg_stat_activity%'  and "state" = 'active'
+ORDER BY query_start  nulls last;
+----
 \x
 select count(*)
 from observation_data;
@@ -87,6 +99,7 @@ from observation_data;;
 \x
 select * from  observation_data limit 1;
 ----
+----
 DROP VIEW if exists hr_view CASCADE;
 DROP VIEW if exists pulse_view CASCADE;
 DROP VIEW if exists resp_view CASCADE;
@@ -94,25 +107,6 @@ DROP VIEW if exists oxy_view CASCADE;
 
 truncate observation_data;
 ----
-select patient_id, (array_agg(smooth_bpm))[1]
-from (
-SELECT
-  ts,
-  Patient_id,
-  AVG(valueQuantity_value) OVER(
-    PARTITION BY Patient_id
-    ORDER BY ts
-    ROWS BETWEEN 60 PRECEDING AND CURRENT ROW
-  )
-  AS smooth_bpm
-FROM observation_data
-WHERE code = '8867-4' -- heart rate
-  and ts > NOW() - INTERVAL '1 minute'
-  --and smooth_bpm > 90
-ORDER BY ts DESC
-) as avgg
-where avgg.smooth_bpm > 100
-group by patient_id;
 ----
 SELECT
   time_bucket('10s', ts) as bucket,
@@ -141,7 +135,9 @@ FROM
   observation_data
 
 ----
+----------------------------------------------------------------------
 DROP VIEW if exists hr_view CASCADE;
+
 
 CREATE VIEW hr_view WITH
 (timescaledb.continuous, timescaledb.refresh_interval = '30s')
@@ -197,6 +193,22 @@ WHERE code = '2708-6' -- resp
 group by patient_id, time_bucket('10s', ts)
 HAVING AVG(valueQuantity_value) < 96
 
+----
+explain analyze
+SELECT ts AS "time"
+, valuesampleddata_data I
+FROM observation_data
+where code = '131329'
+--and ts BETWEEN (1601823599500)::timestamp AND (1601823610500)::timestamp
+and ts BETWEEN '2020-10-04T14:59:59.500Z' AND '2020-10-04T15:00:10.500Z'
+and patient_id = 'bfd8ecb3-06dd-8f08-7121-020a9a589602'
+order by ts
+--limit 1000
+
+----
+create index obsdatacode on observation_data (code);
+----
+analyze observation_data;
 ----
 \x
 SELECT * FROM timescaledb_information.continuous_aggregate_stats;

@@ -10,12 +10,31 @@
 
 (def config
   {:box-url "http://localhost:8888"
-   :jobs {:j1 {:patient-id "333"
+   :jobs {:j1 {:patient-id "bb1cf28f-b3b6-5a90-22f3-71dcecb6fad5"
                :dataset-path  "resources/csv/bidmc_01_Numerics.csv"}
-          :j2 {:patient-id "123"
-               :dataset-path  "resources/csv/bidmc_02_Numerics.csv"}}})
-
-
+          :j2 {:patient-id "bf16eed6-d4f0-c2f4-9ab4-788f458de47b"
+               :dataset-path  "resources/csv/bidmc_02_Numerics.csv"}
+          :j3 {:patient-id "bfd8ecb3-06dd-8f08-7121-020a9a589602"
+               :dataset-path  "resources/csv/bidmc_03_Numerics.csv"}
+          :j4 {:patient-id "eb277a4d-4a42-7905-5576-d92a9a3fda9c"
+               :dataset-path  "resources/csv/bidmc_04_Numerics.csv"}
+          :j5 {:patient-id "e490c516-7f1e-7910-44d4-0ba0fe542b31"
+               :dataset-path  "resources/csv/bidmc_05_Numerics.csv"}
+          :j6 {:patient-id "e2d08a03-e382-c8cf-bc7a-474277238b3b"
+               :dataset-path  "resources/csv/bidmc_06_Numerics.csv"}
+          :j7 {:patient-id "e1ed357c-6753-fe21-f98d-2e5996966ff2"
+               :dataset-path  "resources/csv/bidmc_07_Numerics.csv"}
+          :j8 {:patient-id "e490c516-7f1e-7910-44d4-0ba0fe542b31"
+               :dataset-path  "resources/csv/bidmc_08_Numerics.csv"}
+          :j9 {:patient-id "dd178782-f1bd-7487-e670-32e02d2c8396"
+               :dataset-path  "resources/csv/bidmc_09_Numerics.csv"}
+          :j10 {:patient-id "d5743f3a-b161-67db-d952-983f5544f7a7"
+               :dataset-path  "resources/csv/bidmc_10_Numerics.csv"}
+          :j11 {:patient-id "c81ef392-ed3f-e948-ac90-2e643346ed2d"
+               :dataset-path  "resources/csv/bidmc_11_Numerics.csv"}
+          :j12 {:patient-id "bffc6742-0671-0f7f-3837-d3ecdbb31e8b"
+               :dataset-path  "resources/csv/bidmc_12_Numerics.csv"}
+          }})
 
 (defn configure [n]
   {:box-url "http://localhost:8888"
@@ -159,7 +178,8 @@
 
   (parse-csv  "resources/csv/bidmc_01_Numerics.csv")
 
-  (run-jobs (configure 50))
+  #_(run-jobs (configure 50))
+  (run-jobs config)
 
   (prn 1)
 

@@ -41,6 +41,7 @@ services:
     environment:
       GF_SECURITY_ALLOW_EMBEDDING: "true"
       GF_AUTH_ANONYMOUS_ENABLED:   "true"
+      GF_SERVER_ENABLE_GZIP: "true"
     volumes:
       - "./grafanadata:/var/lib/grafana"
     ports:
