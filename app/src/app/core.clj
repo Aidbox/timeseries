@@ -347,7 +347,7 @@ and code = '131329';
   (doseq [n (range 200)]
     (prn "Load " n)
 
-    (time (count (with-open [reader (io/reader (data-file (or (+ 800 n) 1)))]
+    (time (count (with-open [reader (io/reader (data-file (or (+ 3100 n) 1)))]
               (let [data (ecg-data  reader)]
                 (-> {:subject {:id (get-rand-pt-id)}
                      :id (gen-guid)
@@ -412,6 +412,8 @@ and code = '131329';
 
 
 (comment
+
+  (-main)
 (sdk/start* app-state ctx)
  ;; [V1 V2 V3 V4 V5 V6]
   (def file-path "/Users/aitem/Work/hackaton/pydata/ptb-xl-1.0.1.physionet.org/csv/1.csv")

@@ -28,20 +28,47 @@
                :dataset-path  "resources/csv/bidmc_08_Numerics.csv"}
           :j9 {:patient-id "dd178782-f1bd-7487-e670-32e02d2c8396"
                :dataset-path  "resources/csv/bidmc_09_Numerics.csv"}
-          :j10 {:patient-id "d5743f3a-b161-67db-d952-983f5544f7a7"
+          :j10 {:patient-id "bfd8ecb3-06dd-8f08-7121-020a9a589602"
                :dataset-path  "resources/csv/bidmc_10_Numerics.csv"}
-          :j11 {:patient-id "c81ef392-ed3f-e948-ac90-2e643346ed2d"
+          :j11 {:patient-id "bf16eed6-d4f0-c2f4-9ab4-788f458de47b"
                :dataset-path  "resources/csv/bidmc_11_Numerics.csv"}
-          :j12 {:patient-id "bffc6742-0671-0f7f-3837-d3ecdbb31e8b"
+          :j12 {:patient-id "bb1cf28f-b3b6-5a90-22f3-71dcecb6fad5"
                :dataset-path  "resources/csv/bidmc_12_Numerics.csv"}
           }})
+
+(def ids
+  [
+"bffc6742-0671-0f7f-3837-d3ecdbb31e8b"
+"c4f4d2df-7231-9680-0823-3010a4f1a5fa"
+"c735a1c7-de3b-e8dc-5383-effc04383d92"
+"c81ef392-ed3f-e948-ac90-2e643346ed2d"
+"cdd9feca-447c-3d67-dda7-82c975b5aa1a"
+"d208b5b9-cc46-9a45-a5d5-b8a2f011de8f"
+"d5743f3a-b161-67db-d952-983f5544f7a7"
+"d6da7a48-0b77-234e-9c12-38d8be1e00a1"
+"db390c71-323a-5ee1-e62d-fe5cffd5c7b9"
+"dd178782-f1bd-7487-e670-32e02d2c8396"
+"de193121-01a5-8abe-123f-f914f1cc48bb"
+"e1ed357c-6753-fe21-f98d-2e5996966ff2"
+"e2d08a03-e382-c8cf-bc7a-474277238b3b"
+"e3792593-e73d-a677-9f88-d16b51028811"
+"e490c516-7f1e-7910-44d4-0ba0fe542b31"
+"e51759b6-8c04-ca89-394e-6faa6a736c6f"
+"e51d0cfe-a011-908f-29f7-f882725b4146"
+"e978f328-bfb3-f0d6-8d74-54dd550f83b3"
+"eb277a4d-4a42-7905-5576-d92a9a3fda9c"
+"eb4b5684-60e3-625c-56d7-542e8b0d2c3b"
+"ebbd68bb-1160-0a61-9aa7-392fb5d9e1a7"
+   ]
+  )
+
 
 (defn configure [n]
   {:box-url "http://localhost:8888"
    :jobs (reduce
           (fn [acc v]
             (assoc acc v
-                   {:patient-id (gen-guid)
+                   {:patient-id ( get ids v)
                     :dataset-path (str "resources/csv/bidmc_"  (format "%02d" v) "_Numerics.csv")}))
           {}
           (range 1 (inc n)))})
@@ -141,6 +168,7 @@
 
 
 (defn send-observation [resource]
+  (prn "send")
   (req-put {:uri     "/Observation"
             :options {:body resource}}))
 
@@ -178,10 +206,11 @@
 
   (parse-csv  "resources/csv/bidmc_01_Numerics.csv")
 
-  #_(run-jobs (configure 50))
-  (run-jobs config)
+  (run-jobs (configure 15))
 
-  (prn 1)
+
+  #_(run-jobs config)
+
 
   (build-observation {:patient-id   "333"
                       :dataset      {:rel-time "111", :hr "92", :pulse "NaN", :resp "23", :spo2 "NaN"}

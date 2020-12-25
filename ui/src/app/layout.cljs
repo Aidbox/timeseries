@@ -21,7 +21,7 @@
         [:div.peers.ai-c.fxw-nw
          [:div.peer
           [:div.logo
-           [:img {:width "50px" :height "50px" :alt "", :src "/heart.svg"}]]]
+           [:img {:width "50px" :height "50px" :alt "", :src "/heart2.svg"}]]]
          [:div.peer.peer-greed [:h5.ml-4.lh-1.mB-0.logo-text {:style {:color "#313435" :font-size "24px" :font-weight "300"}} "Aidbox & TS"]]]]
        [:div.peer
         [:div.mobile-toggle.sidebar-toggle

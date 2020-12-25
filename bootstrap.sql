@@ -68,8 +68,8 @@ CREATE TABLE observation_data (
 );
 
 SELECT create_hypertable('observation_data', 'ts');
-SELECT add_dimension('observation_data', 'Patient_id',     number_partitions => 200, if_not_exists => true);
-SELECT add_dimension('observation_data', 'Observation_id', number_partitions => 200, if_not_exists => true);
+SELECT add_dimension('observation_data', 'patient_id',     number_partitions => 20, if_not_exists => true);
+SELECT add_dimension('observation_data', 'observation_id', number_partitions => 20, if_not_exists => true);
 
 ----
 \d+ observation_data
@@ -194,6 +194,8 @@ group by patient_id, time_bucket('10s', ts)
 HAVING AVG(valueQuantity_value) < 96
 
 ----
+-- ECG
+----
 explain analyze
 SELECT ts AS "time"
 , valuesampleddata_data I
@@ -206,6 +208,36 @@ order by ts
 --limit 1000
 
 ----
+-- Oxygen
+SELECT
+ts as time,
+valueQuantity_value oxygen_saturation
+FROM observation_data
+WHERE ts BETWEEN '2020-12-24T10:49:43.374Z' AND '2020-12-27T21:04:43.374Z'
+and code = '2708-6'
+and patient_id = 'bb1cf28f-b3b6-5a90-22f3-71dcecb6fad5' order by ts desc
+limit 10
+
+----
+SELECT ts as time,
+valueQuantity_value oxygen_saturation
+FROM observation_data
+WHERE
+ts BETWEEN '2020-12-25T16:43:40.231Z' AND '2020-12-25T16:58:40.231Z'
+and code = '2708-6'
+and patient_id = 'bffc6742-0671-0f7f-3837-d3ecdbb31e8b' order by ts desc limit 10
+----
+show max_connection;
+----
+delete from patient
+where id in (select id from patient limit 100);
+----
+select id from patient;
+----
+select count(*) from observation_data;
+----
+select 1;
+----
 create index obsdatacode on observation_data (code);
 ----
 analyze observation_data;
@@ -213,5 +245,6 @@ analyze observation_data;
 \x
 SELECT * FROM timescaledb_information.continuous_aggregate_stats;
 ----
+
 ----
 ----
