@@ -34,6 +34,13 @@
         [:span.icon-holder [:i.c-blue-500.ti-home] " "]
         [:span.title "Patients"]]]
 
+      [:li.nav-item.active
+       [:a.sidebar-link
+        {:default "",
+         :href "#/"}
+        [:span.icon-holder [:i.c-pink-500.ti-palette] " "]
+        [:span.title "Devices"]]]
+
       [:li.nav-item.dropdown.open
        [:a.dropdown-toggle
         {:href "javascript:void(0);"}

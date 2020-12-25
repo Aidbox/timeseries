@@ -1,7 +1,9 @@
 (ns app.core
   (:require [reagent.dom :as rdom]
+            [re-frame.core :as rf]
             [reagent.core :as r]
             [app.pages.core :as pages]
+            #?(:cljs [zframes.xhr :as xhr])
             [app.routes :refer [routes]]
             [app.layout]
             [app.auth]
@@ -20,4 +22,6 @@
 
 (defn ^:dev/after-load init []
   (srv)
+  (rf/dispatch-sync [::xhr/init {:base-url "http://localhost:8888"}])
+
   (rdom/render [root] (.getElementById js/document "root")))

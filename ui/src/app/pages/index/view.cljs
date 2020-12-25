@@ -8,6 +8,25 @@
  (fn [page _]
    [:div
     [:div.row
+     [:div.col-md-12
+      [:div.bd.bgc-white
+       (for [p (:pts page)]
+         [:div.pX-30.pY-20.peers.ai-c.bdB.bgcH-grey-100.cur-p ;;.jc-sb
+          [:div.peer.mR-20
+           [:img.bdrs-50p.w-3r.h-3r {:src (str "https://i.pravatar.cc/150?u=" (:id p))}]]
+          [:div.peer
+           [:small (:birthDate p)]
+           [:h5.c-grey-900.mB-5
+            (get-in p [:name 0 :given 0])
+            " "
+            (get-in p [:name 0 :family])
+            ]]
+          ]
+
+
+         )]]
+
+
 
      [:div.col-md-12
       [:iframe
