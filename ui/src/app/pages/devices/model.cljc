@@ -1,4 +1,4 @@
-(ns app.pages.index.model
+(ns app.pages.devices.model
   (:require [re-frame.core :as rf]
             [zframes.pages :as pages]))
 
@@ -18,8 +18,7 @@
  :<- [:xhr/response index-page]
  :<- [:xhr/response ::devices]
  (fn [[pts devices] _]
-   {:pts (->> pts :data :entry (map :resource))
-    :d (->> devices
-            :data
-            (reduce
-             (fn [acc d] (assoc acc (:device_id d) true)) {}))}))
+   {:pts (->> pts :data :entry (map :resource)
+              (reduce
+               (fn [acc d] (assoc acc (:id d) d)) {}))
+    :d (->> devices :data)}))

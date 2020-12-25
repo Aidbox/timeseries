@@ -3,6 +3,8 @@
 (def routes
   {:.          :app.pages.index.model/index-page
    :layout     :main
+   "devices"   {:. :app.pages.devices.model/index-page
+                :layout     :main}
    "patient"   {:. :app.pages.patient.model/index-page
                 :layout     :main
                 [:id] {:layout     :main

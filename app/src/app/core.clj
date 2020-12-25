@@ -33,6 +33,7 @@
     :operations
     {:create-ts-observation {:method "POST" :path ["Observation"]}
      :get-ts-observation    {:method "GET" :path ["Observation" {:name :id}]}
+     :devices               {:method "GET" :path ["$devices"]}
 
      :get-hr-all      {:method "GET" :path ["$hr"]}
      :get-hr-personal {:method "GET" :path ["$hr" {:name :patient-id}]}
@@ -112,6 +113,7 @@
                (get-in resource [:effective :instant])
                (get-in resource [:effective :Period :start]))
         pt_id (get-in resource [:subject :id])
+        d_id (get-in resource [:device :id])
         dates (mk-obs-date resource)
         component (or (:component resource) [resource])]
     (->> component
@@ -138,6 +140,7 @@
               [(merge
                 {:Observation_id id
                  :ts ts
+                 :Device_id d_id
                  :Patient_id pt_id}
                 (mk-component-code c)
                 dates
@@ -207,6 +210,18 @@
   (let [{:keys [id]} (:route-params request)]
     {:status 200
      :body (ts-2-observation id)}))
+
+(defmethod sdk/endpoint
+  :devices
+  [ctx _]
+  {:status 200
+   :body
+   (jdbc/query
+    @conn
+    "select distinct device_id
+from observation_data
+where   ts between (NOW() - INTERVAL '5 minute') and now()
+limit 20; ")})
 
 
 (defonce app-state (atom {}))
@@ -344,10 +359,10 @@ and code = '131329';
 (comment
   (get-rand-pt-id)
 
-  (doseq [n (range 100)]
+  (doseq [n (range 200)]
     (prn "Load " n)
 
-    (time (count (with-open [reader (io/reader (data-file (or (+ 100 n) 1)))]
+    (time (count (with-open [reader (io/reader (data-file (or (+ 3900 n) 1)))]
               (let [data (ecg-data  reader)]
                 (-> {:subject {:id (get-rand-pt-id)}
                      :id (gen-guid)
@@ -412,6 +427,8 @@ and code = '131329';
 
 
 (comment
+
+  (-main)
 (sdk/start* app-state ctx)
  ;; [V1 V2 V3 V4 V5 V6]
   (def file-path "/Users/aitem/Work/hackaton/pydata/ptb-xl-1.0.1.physionet.org/csv/1.csv")

@@ -9,7 +9,12 @@
 
 (def app-styles
   (s/styles
-   []))
+   [{:.frame {:zoom "1.75"
+              :-ms-transform "scale(1.25)"
+              :-moz-transform "scale(1.25)"
+              :-o-transform "scale(1.25)"
+              :-webkit-transform "scale(1.25)"
+              :transform "scale(1.25)"}}]))
 
 (def sidebar
   [:div.sidebar
@@ -22,7 +27,7 @@
         [:div.peers.ai-c.fxw-nw
          [:div.peer
           [:div.logo
-           [:img {:width "50px" :height "50px" :alt "", :src "/heart.svg"}]]]
+           [:img {:width "50px" :height "50px" :alt "", :src "/heart2.svg"}]]]
          [:div.peer.peer-greed [:h5.ml-4.lh-1.mB-0.logo-text {:style {:color "#313435" :font-size "24px" :font-weight "300"}} "Aidbox & TS"]]]]
        [:div.peer
         [:div.mobile-toggle.sidebar-toggle
@@ -38,7 +43,7 @@
       [:li.nav-item.active
        [:a.sidebar-link
         {:default "",
-         :href "#/"}
+         :href "#/devices"}
         [:span.icon-holder [:i.c-pink-500.ti-palette] " "]
         [:span.title "Devices"]]]
 
@@ -71,7 +76,6 @@
          [:a {:href "javascript:void(0);"} [:span "ECG"]]]
         [:li.nav-item.dropdown
          [:a {:href "javascript:void(0);"} [:span "EEG"] " "]]]]]]])
-
 
 (def header
   [:div.header.navbar

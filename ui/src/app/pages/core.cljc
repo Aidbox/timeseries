@@ -2,4 +2,4 @@
   (:require [app.pages.index.view]
             [app.pages.patient.view]
             [app.pages.alert.view]
-            ))
+            [app.pages.devices.view]))
