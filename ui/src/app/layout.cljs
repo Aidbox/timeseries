@@ -54,15 +54,25 @@
         [:span.title "Alerts"]
         " "
         [:span.arrow [:i.ti-angle-right]]]
-       [:ul.dropdown-menu
-        [:li [:a {:href "#/alert/hr"} "Heart Rate "
-              [:span.d-ib.lh-0.va-m.fw-600.bdrs-10em.pX-10.pY-10.bgc-red-50.c-red-500 "4"]]]
-        [:li [:a {:href "#/alert/pulse"} "Pulse"
-              [:span.d-ib.lh-0.va-m.fw-600.bdrs-10em.pX-10.pY-10.bgc-purple-50.c-purple-500 "3"]]]
-        [:li [:a {:href "#/alert/resp"} "Respiratory rate "
-              [:span.d-ib.lh-0.va-m.fw-600.bdrs-10em.pX-10.pY-10.bgc-yellow-50.c-yellow-500 "1"]]]
-        [:li [:a {:href "#/alert/oxy"} "Oxygen saturation "
-              [:span.d-ib.lh-0.va-m.fw-600.bdrs-10em.pX-10.pY-10.bgc-green-50.c-green-500 "10"]]]]]
+       (let [alerts (rf/subscribe [::index/alerts])]
+         [:ul.dropdown-menu
+          [:li
+           [:a {:href "#/alert/hr"} "Heart Rate "
+            (let [hr (:hr (:alerts @alerts))]
+              (when (pos? hr)
+                [:span.d-ib.lh-0.va-m.fw-600.bdrs-10em.pX-10.pY-10.bgc-red-50.c-red-500 hr]))]]
+          [:li [:a {:href "#/alert/pulse"} "Pulse"
+                (let [pulse (:pulse (:alerts @alerts))]
+                  (when (pos? pulse)
+                    [:span.d-ib.lh-0.va-m.fw-600.bdrs-10em.pX-10.pY-10.bgc-purple-50.c-purple-500 pulse]))]]
+          [:li [:a {:href "#/alert/resp"} "Respiratory rate "
+                (let [resp (:resp (:alerts @alerts))]
+                  (when (pos? resp)
+                    [:span.d-ib.lh-0.va-m.fw-600.bdrs-10em.pX-10.pY-10.bgc-yellow-50.c-yellow-500 resp]))]]
+          [:li [:a {:href "#/alert/oxy"} "Oxygen saturation "
+                (let [oxy (:oxy (:alerts @alerts))]
+                  (when (pos? oxy)
+                    [:span.d-ib.lh-0.va-m.fw-600.bdrs-10em.pX-10.pY-10.bgc-green-50.c-green-500 oxy]))]]])]
 
       [:li.nav-item.dropdown.open
        [:a.dropdown-toggle

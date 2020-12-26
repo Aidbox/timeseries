@@ -34,6 +34,8 @@
     {:create-ts-observation {:method "POST" :path ["Observation"]}
      :get-ts-observation    {:method "GET" :path ["Observation" {:name :id}]}
      :devices               {:method "GET" :path ["$devices"]}
+     :alerts                {:method "GET" :path ["$alerts"]}
+
 
      :get-hr-all      {:method "GET" :path ["$hr"]}
      :get-hr-personal {:method "GET" :path ["$hr" {:name :patient-id}]}
@@ -47,7 +49,7 @@
      :get-oxy-all      {:method "GET" :path ["$oxy"]}
      :get-oxy-personal {:method "GET" :path ["$oxy" {:name :patient-id}]}
 
-     :ecg              {:method "GET" :path ["$ecg" {:name :patient-id}]}}}})
+     :ecg {:method "GET" :path ["$ecg" {:name :patient-id}]}}}})
 
 
 (defn to-date [s]
@@ -350,6 +352,20 @@ and code = '131329';
   (let [{:keys [patient-id]} (:route-params request)]
     {:status 200
      :body (get-personal-view "oxy_view" patient-id)}))
+
+
+(defmethod sdk/endpoint
+  :alerts
+  [ctx request]
+  (let [hr (get-view "hr_view")
+        pulse (get-view "pulse_view")
+        resp (get-view "resp_view")
+        oxy (get-view "oxy_view")]
+    {:status 200
+     :body {:hr (count (distinct (map :patient_id hr)))
+            :pulse (count (distinct (map :patient_id pulse)))
+            :resp (count (distinct (map :patient_id resp)))
+            :oxy (count (distinct (map :patient_id oxy)))}}))
 
 (defn get-rand-pt-id []
   (:id (first (jdbc/query @conn "select id from patient order by random() limit 1"))))

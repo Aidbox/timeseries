@@ -11,7 +11,8 @@
                    :req-id pid}
                  {:uri "/$devices"
                   :req-id ::devices}
-                 ]}))
+                 {:uri "/$alerts"
+                  :req-id ::alerts}]}))
 
 (rf/reg-sub
  index-page
@@ -23,3 +24,10 @@
             :data
             (reduce
              (fn [acc d] (assoc acc (:device_id d) true)) {}))}))
+
+(rf/reg-sub
+ ::alerts
+ :<- [:xhr/response ::alerts]
+ (fn [alerts _]
+   (prn alerts)
+   {:alerts  (:data alerts)}))
