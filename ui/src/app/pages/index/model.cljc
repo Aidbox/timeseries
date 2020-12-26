@@ -14,6 +14,12 @@
                  {:uri "/$alerts"
                   :req-id ::alerts}]}))
 
+(rf/reg-event-fx
+ ::alerts
+ (fn [{db :db} [pid phase params]]
+   {:json/fetch [{:uri "/$alerts"
+                  :req-id ::alerts}]}))
+
 (rf/reg-sub
  index-page
  :<- [:xhr/response index-page]
