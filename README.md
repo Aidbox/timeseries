@@ -3,7 +3,7 @@
 
 ## Quik Installation
 
-* Get DevBox license key https://license-ui.aidbox.app
+* Get Aidbox development license  https://aidbox.app
 
 * Copy `.license.tpl` to `.license`
 ``` bash
@@ -12,8 +12,7 @@ cp .license.tpl .license
 
 * Edit `.license` file and enter your `License ID` and `License Key`
 ``` bash
-AIDBOX_LICENSE_ID=<your-license-id-here>
-AIDBOX_LICENSE_KEY=<your-license-key-here>
+AIDBOX_LICENSE=<your-license-id-here>
 ```
 
 * Run `docker-compose.yml`
